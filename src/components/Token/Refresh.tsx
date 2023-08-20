@@ -1,10 +1,10 @@
 import React from "react";
 
-interface SwapProps {
+interface RefreshProps {
   onClose: () => void; // Function to close the modal
 }
 
-const Swap: React.FC<SwapProps> = ({ onClose }) => {
+const Refresh: React.FC<RefreshProps> = ({ onClose }) => {
    return (
      <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center bg-gray-500 bg-opacity-50">
        <div className="relative w-full max-w-md bg-white rounded-lg shadow">
@@ -57,4 +57,4 @@ const Swap: React.FC<SwapProps> = ({ onClose }) => {
    );
 };
 
-export default Swap;
+export default Refresh;

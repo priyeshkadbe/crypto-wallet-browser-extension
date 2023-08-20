@@ -4,9 +4,9 @@
 
 /* Set the max height and max width for the root element */
 html, body {
-  width: 375px;
-  height: 600px;
-  overflow-y: hidden; 
+  min-width: 375px;
+  min-height: 600px;
+  overflow-y: auto; 
   overflow-x:hidden;
 }
 
