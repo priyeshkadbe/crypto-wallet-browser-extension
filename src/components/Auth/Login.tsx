@@ -1,14 +1,20 @@
 "use client";
 import Logo from "@/../public/logo.svg";
+import Favicon from "@/../public/favicon-16.png"
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import HomePage from "../Home/HomePage";
+import { useNavigate } from "react-router-dom";
+import { ReactSVG } from "react-svg";
+import Home from "../Home/Home"
+
+
+import { ArrowDownCircleIcon } from "@heroicons/react/20/solid";
 
 function Login() {
   const [inputValue, setInputValue] = useState("");
   const [isLogged, setIsLogged] = useState(false);
+  const navigate = useNavigate();
 
   const handleUnlockClick = () => {
     // You can perform any necessary validation here before unlocking.
@@ -25,7 +31,12 @@ function Login() {
     return (
       <div className=" flex flex-col justify-center items-center gap-4 w-full">
         <div>
-          <Image src={Logo} alt="logo" />
+          {/* <ArrowDownCircleIcon className="h-6 w-6 text-blue-500" /> */}
+          <Image
+            src={Logo}
+            alt="dfdf"
+            className="h-16 w-16"
+          />
         </div>
         <div className="flex flex-col justify-center items-center gap-1">
           <h1 className="text-5xl text-[#373583] whitespace-nowrap">
@@ -43,11 +54,11 @@ function Login() {
             />
             <button
               className="bg-[#373583] p-2 rounded-lg  flex-1 self-stretch text-white text-center text-xl"
-               onClick={handleUnlockClick} 
+              onClick={() => navigate("/home")}
             >
               unlock
             </button>
-            <Link href="otherpage" className="text-[#373583] text-xl my-2">
+            <Link href="/home" className="text-[#373583] text-xl my-2">
               forgot password ?
             </Link>
           </div>
@@ -55,7 +66,7 @@ function Login() {
       </div>
     );
   }
-  return <HomePage />;
+  return <Home />;
 }
 
 export default Login;
