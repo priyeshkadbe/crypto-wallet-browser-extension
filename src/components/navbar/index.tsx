@@ -90,8 +90,8 @@ function Navbar() {
         className="flex gap-2 bg-slate-500 rounded-full p-2"
         onClick={() =>
           openModal({
-            title: "Currency Modal",
-            content: "Currency modal content goes here.",
+            title: "Network Modal",
+            content: "Nework  modal content goes here.",
             showModal: true,
           })
         }
