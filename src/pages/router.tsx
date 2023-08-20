@@ -5,6 +5,9 @@ import Welcome from "@/components/Welcome/Welcome";
 import ImportExisiting from "@/components/wallet/import-exisiting";
 import WalletHome from "@/components/wallet/wallet-home";
 import HomePage from "@/components/Home/Home";
+import ForgotPassword from "@/components/Auth/ForgotPassword";
+import NewPassword from "@/components/Auth/NewPassword";
+import EnterRecoveryPhrase from "@/components/Auth/EnterRecoveryPhrase";
 
 
 
@@ -14,12 +17,14 @@ export default function Router() {
     <div>
       <HashRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Login />} />
           <Route index path="/home" element={<HomePage />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
           <Route path="/import-existing" element={<ImportExisiting />} />
+          <Route path="/login" element={ <Login/>  } />
           <Route path="/create-new" element={<WalletHome />} />
-
+          <Route path="/enter-recovery-phrase" element={<EnterRecoveryPhrase/>} />
+          <Route path="/new-password" element={<NewPassword/>} />
         </Routes>
       </HashRouter>
     </div>

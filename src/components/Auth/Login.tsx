@@ -58,9 +58,9 @@ function Login() {
             >
               unlock
             </button>
-            <Link href="/home" className="text-[#373583] text-xl my-2">
+            < button onClick={()=>navigate("/enter-recovery-phrase")} className="text-[#373583] text-xl my-2">
               forgot password ?
-            </Link>
+            </button>
           </div>
         </div>
       </div>
