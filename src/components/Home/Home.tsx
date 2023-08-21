@@ -39,14 +39,13 @@ function HomePage() {
     send: <ArrowUpRightIcon className="h-8 w-8 text-blue-500"  />,
     swap: <ArrowsRightLeftIcon className="h-8 w-8  text-blue-500" />,
     addNewToken: <PlusCircleIcon className="h-8 w-8  text-blue-500" />,
-    refresh: <ArrowPathIcon className="h-8 w-8  text-blue-500" />,
   };
   
    const labels: Record<string, string> = {
      send: "Send",
      swap: "Swap",
      addNewToken: "Add New Token",
-     refresh:"Refresh"
+
    };
   
    const renderModal = () => {
@@ -59,8 +58,6 @@ function HomePage() {
          return <Swap onClose={closeModal} />;
        case "addNewToken":
          return <AddNew onClose={closeModal} />;
-       case "refresh":
-         return <Refresh onClose={closeModal} />;
        default:
          return null;
      }

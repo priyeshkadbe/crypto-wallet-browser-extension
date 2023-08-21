@@ -1,4 +1,6 @@
 import React, { ChangeEvent } from 'react';
+import {useNavigate}from "react-router-dom"
+import { EyeIcon, ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 interface PasswordProps {
   password: string;
@@ -13,6 +15,9 @@ const Password: React.FC<PasswordProps> = ({
   onChange,
   onNext,
 }) => {
+
+  const navigate=useNavigate()
+
   return (
     <div className="flex flex-col justify-center items-center">
       <h1 className="text-3xl font-semibold p-4">Create Password</h1>

@@ -15,8 +15,8 @@ const SecureWallet: React.FC<SecureWalletProps> = ({
   onNext,
 }) => {
   return (
-    <div className="flex flex-col justify-center items-center">
-      <h1 className="text-3xl font-bold p-4">
+    <div className="flex flex-col justify-center items-center overflow-y-hidden">
+      <h1 className="text-3xl font-bold">
         Write down your Secret Recovery Phrase
       </h1>
       <p className="text-xl px-4 py-2">
