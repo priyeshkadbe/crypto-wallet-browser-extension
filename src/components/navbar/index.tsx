@@ -7,6 +7,7 @@ import {
   EllipsisVerticalIcon,
   ArrowUpRightIcon,
   ArrowsRightLeftIcon,
+  UserCircleIcon,
 } from "@heroicons/react/20/solid";
 import NetworkDropdown from "./dropdown/NetworkDropdown";
 import AccountDropdown from "./dropdown/AccountDropdown";
@@ -51,8 +52,8 @@ function Navbar() {
   };
 
   const icons: Record<string, React.ReactNode> = {
-    network: <CurrencyRupeeIcon className="h-8 w-8 text-blue-500" />,
-    accounts: <ChevronDownIcon className="h-8 w-8  text-blue-500" />,
+    network: <GlobeAltIcon className="h-8 w-8 " />,
+    accounts: <UserCircleIcon className="h-8 w-8  " />,
     menu: <EllipsisVerticalIcon className="h-8 w-8" />,
   };
 
@@ -75,8 +76,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
-
-
-
-
