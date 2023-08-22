@@ -14,8 +14,8 @@ const DropDownLayout: React.FC<DropDownLayoutProps> = ({
   icon,
 }) => {
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center bg-gray-500 bg-opacity-50">
-      <div className="relative w-full max-w-md bg-white rounded-lg shadow">
+    <div className="fixed px-2 top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center bg-gray-500 bg-opacity-50">
+      <div className="relative w-full  bg-white rounded-lg shadow">
         <div className="flex items-center justify-between p-5 border-b rounded-t">
           <h3 className="text-xl font-medium text-gray-900">{title}</h3>
           <button

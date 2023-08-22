@@ -11,12 +11,15 @@ import {
   ArrowsRightLeftIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/20/solid";
+import AddNewNetwork from "@/components/Networks/AddNewNetwork";
 interface NetworkProps {
   onClose: () => void;
 }
 
 
 const NetworkContent = () => {
+
+
   return (
     <div className="flex flex-col w-full  gap-1">
       <div className="overflow-y-auto">
@@ -26,7 +29,8 @@ const NetworkContent = () => {
         </button>
       </div>
 
-      <button className="flex justify-center items-center text-blue-500 ">
+      <button className="flex justify-center items-center text-blue-500 "
+      >
         Add A Network
       </button>
     </div>

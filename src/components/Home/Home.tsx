@@ -36,16 +36,15 @@ function HomePage() {
    };
 
   const icons: Record<string, React.ReactNode> = {
-    send: <ArrowUpRightIcon className="h-8 w-8 text-blue-500"  />,
-    swap: <ArrowsRightLeftIcon className="h-8 w-8  text-blue-500" />,
-    addNewToken: <PlusCircleIcon className="h-8 w-8  text-blue-500" />,
+    send: <ArrowUpRightIcon className="h-10 w-10 text-blue-500"  />,
+    swap: <ArrowsRightLeftIcon className="h-10 w-10  text-blue-500" />,
+    addNewToken: <PlusCircleIcon className="h-10 w-10  text-blue-500" />,
   };
   
    const labels: Record<string, string> = {
      send: "Send",
      swap: "Swap",
      addNewToken: "Add New Token",
-
    };
   
    const renderModal = () => {
@@ -75,22 +74,22 @@ function HomePage() {
         <div className="m-2 my-4">
           <h1 className="text-3xl">4 ETH</h1>
         </div>
-        <div className="flex w-full justify-between gap-1">
+        <div className="flex w-full justify-evenly gap-1">
           {Object.keys(icons).map((key) => (
             <button
               key={key}
-              className="flex flex-col justify-center items-center p-1"
+              className="flex flex-col justify-center items-center p-1 gap-1"
               onClick={() => openModal(key)} // Open modal when the button is clicked
             >
               {icons[key]}
-              <p>{labels[key]}</p>
+              <p className="text-md">{labels[key]}</p>
             </button>
           ))}
         </div>
       </div>
-      <div className="flex justify-between flex-grow w-full ">
+      <div className="flex justify-evenly flex-grow w-full ">
         <h1
-          className={`cursor-pointer w-[1/2] px-18  text-lg font-light ${
+          className={`cursor-pointer w-[1/2] px-18 p-2  text-lg font-light ${
             selectedOption === "tokens"
               ? "text-blue-500 border-b-2 border-blue-500"
               : ""
@@ -100,9 +99,9 @@ function HomePage() {
           Tokens
         </h1>
         <h1
-          className={`cursor-pointer w-[1/2] px-18 text-lg  font-light ${
+          className={`cursor-pointer w-[1/2] p-2 px-18 text-lg  font-light ${
             selectedOption === "activity"
-              ? "text-blue-500 border-b-2 border-blue-500"
+              ? "text-blue-500 border-b-2  border-blue-500"
               : ""
           }`}
           onClick={() => handleOptionClick("activity")}

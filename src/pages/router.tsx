@@ -8,6 +8,7 @@ import ForgotPassword from "@/components/Auth/ForgotPassword";
 import NewPassword from "@/components/Auth/NewPassword";
 import EnterRecoveryPhrase from "@/components/Auth/EnterRecoveryPhrase";
 import Signup from "@/components/Auth/Signup";
+import AddNewNetwork from "@/components/Networks/AddNewNetwork";
 
 
 
@@ -17,7 +18,7 @@ export default function Router() {
     <div>
       <HashRouter>
         <Routes>
-          <Route path="/" element={<Signup />} />
+          <Route path="/" element={<HomePage />} />
           <Route index path="/home" element={<HomePage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
           <Route path="/import-existing" element={<ImportExisiting />} />
@@ -28,6 +29,7 @@ export default function Router() {
             element={<EnterRecoveryPhrase />}
           />
           <Route path="/new-password" element={<NewPassword />} />
+          {/* <Route path="/add-new-network" element={<AddNewNetwork/>} /> */}
         </Routes>
       </HashRouter>
     </div>
