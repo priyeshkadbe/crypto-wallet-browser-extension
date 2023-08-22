@@ -1,7 +1,6 @@
 import { HashRouter, Navigate, Routes, Route, Link } from "react-router-dom";
 import Login from "@/components/Auth/Login";
 
-import Welcome from "@/components/Welcome/Welcome";
 import ImportExisiting from "@/components/wallet/import-exisiting";
 import WalletHome from "@/components/wallet/wallet-home";
 import HomePage from "@/components/Home/Home";
@@ -18,7 +17,7 @@ export default function Router() {
     <div>
       <HashRouter>
         <Routes>
-          <Route path="/" element={<Welcome />} />
+          <Route path="/" element={<Signup />} />
           <Route index path="/home" element={<HomePage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
           <Route path="/import-existing" element={<ImportExisiting />} />

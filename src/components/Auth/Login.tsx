@@ -1,5 +1,5 @@
 "use client";
-import Logo from "@/../public/logo.svg";
+
 import Favicon from "@/../public/favicon-16.png"
 import Image from "next/image";
 import Link from "next/link";
@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactSVG } from "react-svg";
 import Home from "../Home/Home"
+import {Logo} from "../Logo"
 
 
 import { ArrowDownCircleIcon } from "@heroicons/react/20/solid";
@@ -32,11 +33,7 @@ function Login() {
       <div className=" flex flex-col justify-center items-center gap-4 w-full">
         <div>
           {/* <ArrowDownCircleIcon className="h-6 w-6 text-blue-500" /> */}
-          <Image
-            src={Logo}
-            alt="dfdf"
-            className="h-16 w-16"
-          />
+          <Logo />
         </div>
         <div className="flex flex-col justify-center items-center gap-1">
           <h1 className="text-5xl text-[#373583] whitespace-nowrap">
@@ -58,7 +55,10 @@ function Login() {
             >
               unlock
             </button>
-            < button onClick={()=>navigate("/enter-recovery-phrase")} className="text-[#373583] text-xl my-2">
+            <button
+              onClick={() => navigate("/enter-recovery-phrase")}
+              className="text-[#373583] text-xl my-2"
+            >
               forgot password ?
             </button>
           </div>

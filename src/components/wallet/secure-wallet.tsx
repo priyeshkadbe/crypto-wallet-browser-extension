@@ -16,24 +16,24 @@ const SecureWallet: React.FC<SecureWalletProps> = ({
 }) => {
   return (
     <div className="flex flex-col justify-center items-center overflow-y-hidden">
-      <h1 className="text-3xl font-bold">
-        Write down your Secret Recovery Phrase
+      <h1 className="text-3xl font-bold flex items-center justify-center text-center">
+         Secret Recovery Phrase
       </h1>
-      <p className="text-xl px-4 py-2">
+      <p className="text-lg font-light px-4 py-2 flex items-center justify-center text-center">
         Write down this 12-word Secret Recovery Phrase and save it in a place
         that you trust and only you can access.
       </p>
       <textarea
         name="secretPhrase"
         id="secretPhrase"
-        cols={30}
-        rows={10}
+        cols={40}
+        rows={5}
         value={secretPhrase}
         onChange={onChange}
-        className="m-2 outline-1 outline-gray-700"
+        className="m-2 outline-1 border-gray-700"
       ></textarea>
       <div className="flex flex-row justify-end gap-16 m-2">
-        <button className="flex flex-row justify-center items-center">
+        <button className="flex flex-row gap-2 justify-center items-center">
           <EyeIcon className="h-4 w-4" />
           <h1 className="text-blue-500 text-xs">reveal the seed phase</h1>
         </button>
@@ -42,7 +42,7 @@ const SecureWallet: React.FC<SecureWalletProps> = ({
           <h1 className="text-blue-500 text-xs">copy to clipboard</h1>
         </button>
       </div>
-      <div>
+      <div className="mt-4">
         <button
           type="button"
           onClick={onPrev}
