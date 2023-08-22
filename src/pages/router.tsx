@@ -18,7 +18,7 @@ export default function Router() {
     <div>
       <HashRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Signup />} />
           <Route index path="/home" element={<HomePage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
           <Route path="/import-existing" element={<ImportExisiting />} />

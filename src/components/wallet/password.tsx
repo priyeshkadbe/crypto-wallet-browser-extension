@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from "react";
 import {useNavigate}from "react-router-dom"
 import { EyeIcon, ArrowLeftIcon } from "@heroicons/react/20/solid";
 
@@ -16,7 +16,8 @@ const Password: React.FC<PasswordProps> = ({
   onNext,
 }) => {
 
-  const navigate=useNavigate()
+  const navigate = useNavigate()
+  
 
   return (
     <div className="flex flex-col justify-center items-center">

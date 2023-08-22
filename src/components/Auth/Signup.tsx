@@ -1,11 +1,17 @@
 
-import Image from "next/image";
+
 "use client";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../Logo";
+import { useGetUsersQuery } from "@/redux/services/userApi";
+import { decrement, increment, reset } from "@/redux/features/counterSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+
 function Signup() {
   
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const count = useAppSelector((state) => state.counterReducer.value);
+  const dispatch = useAppDispatch();
 
 
   return (
