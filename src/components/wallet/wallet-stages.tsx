@@ -71,7 +71,9 @@ export default function WalletStages({
               </div>
             </div>
           ))}
-          <div className="absolute top-1/2 h-1 w-full -translate-y-1/2 transform bg-blue-500  "></div>
+          <div
+            className="absolute top-1/2 h-1 w-full -translate-y-1/2 transform bg-blue-500  "
+          ></div>
         </div>
       </div>
     </>
