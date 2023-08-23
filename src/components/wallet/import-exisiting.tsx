@@ -2,6 +2,11 @@
 import React, { ReactHTMLElement, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  checkAccountExists,
+  encryptMnemonic,
+  storeMnemonics,
+} from "../../services/accountServices";
+import {
   EyeIcon,
   ArrowLeftIcon,
   EyeSlashIcon,
@@ -31,7 +36,6 @@ export default function ImportExisting() {
   );
 
   const handlePaste = (e: React.ClipboardEvent<HTMLElement>, index: number) => {
-
     e.preventDefault();
     const pasteText = e.clipboardData.getData('text');
     const words = pasteText.split(" ");
@@ -63,36 +67,30 @@ export default function ImportExisting() {
   };
 
 
-  const validateMnemonic = (mnemonic:string)  => {
-    try {
-      return bip39.validateMnemonic(mnemonic);
-    } catch (error) {
-      // throw { error };
-      return false
-    }
-  }
 
+ 
 
-  const checkAccountExists = async (
+  const accountExists = async (
     ) => {
-    // const exits = validateMnemonic(seedPhrase)
-    // console.log(exits);
-    const path = "m/44'/60'/0'/0";
-    const chainId = 1;
-    let string = "";
     if (!isAllField()) {
-      console.log("please fill all the fields");
+      toast.error("please fill all the fields");
       return false
     }
-    console.log(inputValues.join(" "))
-    const wallet = await ethers.Wallet.fromMnemonic(inputValues.join(" "));
-    console.log(wallet);
+    let isWalletExits = await checkAccountExists(inputValues.join(" "));
+    if (!isWalletExits) {
+      toast.error("provided mnemonic(seed phrase) is incorrect")
+      return 
+    }
+    toast.success("exits");
+    navigate("/new-password")
   };
 
 
 
   return (
     <div className="flex flex-col justify-center items-center p-4">
+      <ToastContainer />
+
       <div className="flex flex-start ">
         <button onClick={() => navigate("/")}>
           <ArrowLeftIcon className="h-6 w-6" />
@@ -137,10 +135,7 @@ export default function ImportExisting() {
         <button
           type="button"
           // onClick={() => navigate("/new-password")}
-          onClick={() =>
-            checkAccountExists(
-            )
-          }
+          onClick={() => accountExists()}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Next

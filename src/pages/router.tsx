@@ -9,6 +9,7 @@ import NewPassword from "@/components/Auth/NewPassword";
 import EnterRecoveryPhrase from "@/components/Auth/EnterRecoveryPhrase";
 import Signup from "@/components/Auth/Signup";
 import AddNewNetwork from "@/components/Networks/AddNewNetwork";
+import Password from "@/components/wallet/password";
 
 
 

@@ -2,27 +2,22 @@ import { createSlice, PayloadAction,AsyncThunkAction, createAsyncThunk } from "@
 import { checkAccountExists } from "../services";
 import {RootState} from "../store"
 
+
 interface AccountState{
-  isAccountExists: boolean,
-  error:string | null
+  mnemonics: string,
+  password: string,
+  accounts: [
+    {
+      account:string,
+      publicKey: string,
+      privateKey:string,
+    }
+  ]
 }
 
-const initialState: AccountState = {
-  isAccountExists: false,
-  error:null
-}
 
-// export const fetchAccountStatus = createAsyncThunk<
-//   boolean,
-//   string,
-//   { state: RootState; rejectValue: string }
-// >("account/fetchAccountStatus", async (seedPhrase, { rejectWithValue }) => {
-//   try {
-//     const isAccountExisting = await checkAccountExists(seedPhrase);
-//     return isAccountExisting; // Ensure this is of type `boolean`
-//   } catch (error) {
-//     return rejectWithValue(error.message);
-//   }
-// });
+
+
+
 
 
