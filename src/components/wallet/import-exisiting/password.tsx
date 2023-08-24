@@ -31,18 +31,14 @@ export const Password: React.FC<PasswordProps> = ({
       toast.error("The password must be greater than 5 characters");
       return;
     }
-
+    password = pass
+    console.log(password);
     navigate("/home");
   };
 
   return (
     <div className="flex flex-col justify-center items-center">
       <ToastContainer />
-      <div className="flex flex-start ">
-        <button onClick={() => navigate("/import-existing")}>
-          <ArrowLeftIcon className="h-6 w-6" />
-        </button>
-      </div>
       <h1 className="text-3xl font-semibold p-4">Create Password</h1>
       <div className="">
         <div className="m-3">
@@ -72,15 +68,6 @@ export const Password: React.FC<PasswordProps> = ({
           />
         </div>
       </div>
-      {/* <button
-        type="button"
-        // onClick={onNext}
-        // onClick={() => navigate("/home")}
-        onClick={onSubmit}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Next
-      </button> */}
       <div className="mt-4">
         <button
           type="button"
@@ -91,7 +78,7 @@ export const Password: React.FC<PasswordProps> = ({
         </button>
         <button
           type="button"
-          onClick={onNext}
+          onClick={onSubmit}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Next

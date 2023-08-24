@@ -48,6 +48,8 @@ export default function ImportExisting() {
     console.log(formData);
   };
 
+
+
   const handleStageClick = (stepNumber: number) => {
     // Handle going back to a previous stage
     // For example, if stepNumber is 1 and currentStep is 3, setStep(1)
@@ -55,6 +57,15 @@ export default function ImportExisting() {
       setStep(stepNumber);
     }
   };
+
+
+  const handleRecoverPhraseSubmit = () => {
+    
+  }
+
+  const handlePasswordSubmit = () => {
+    
+  }
 
   const renderForm = () => {
     switch (step) {

@@ -1,19 +1,22 @@
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useHistory from React Router
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  checkAccountExists,
+  encryptMnemonic,
+  storeMnemonics,
+} from "@/services/accountServices";
 interface SecretRecoveryPhaseProps {
   secretPhrase: string;
-  onConfirm?: (e: React.FormEvent<HTMLFormElement>) => void; // Change to FormEvent
   onNext: () => void;
 }
 
-
 export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
   secretPhrase,
-  onConfirm,
-})=>{
-
+  onNext,
+}) => {
   const numberOfRows = 4; // Number of rows
   const inputsPerRow = 3; // Number of inputs per row
   const totalInputs = numberOfRows * inputsPerRow;
@@ -52,8 +55,34 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
     setShowPasswords(newShowPasswords);
   };
 
+  const isAllField = () => {
+    return inputValues.every((value) => value.trim() !== "");
+  };
+
+  const handleNext = async () => {
+    if (!isAllField()) {
+      toast.error("please fill all the fields");
+      return false;
+    }
+    let isWalletExits = await checkAccountExists(inputValues.join(" "));
+    if (!isWalletExits) {
+      toast.error("provided mnemonic(seed phrase) is incorrect");
+      return;
+    }
+    toast.success("exits");
+    secretPhrase = inputValues.join(" ");
+    console.log(secretPhrase);
+    onNext();
+  };
+
+  const handleClear = () => {
+    const clearedValues = Array(inputValues.length).fill("");
+    setInputValues(clearedValues);
+  };
+
   return (
     <div className="flex flex-col justify-center items-center">
+      <ToastContainer />
       <h1 className="text-3xl font-bold p-4 text-center">
         Enter The Secret Recovery Phrase
       </h1>
@@ -87,13 +116,19 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
         ))}
       </div>
 
-      <div>
+      <div className=" flex m-4 gap-12 ">
+        <button
+          onClick={() => handleClear()}
+          className="text-blue-500 border border-blue-500  focus:outline-none focus:ring-4 focus:ring-blue-300   font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 "
+        >
+          clear
+        </button>
         <button
           type="button"
           // onClick={onConfirm as () => void} // Cast to correct event type
           // Pass event argument if needed
           // onClick={() => navigate("/new-password")}
-          
+          onClick={() => handleNext()}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Next
@@ -101,4 +136,4 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
       </div>
     </div>
   );
-}
+};
