@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 /* Set the max height and max width for the root element */
+
+
 html, body {
   min-width: 375px;
   min-height: 600px;
@@ -10,4 +12,13 @@ html, body {
   overflow-x:hidden;
 }
 
-
+/*
+@layer base{
+  body{
+  @apply min-w-min
+  @apply min-h-min
+  @apply overflow-x-hidden
+  @apply overflow-y-auto
+  }
+}
+*/

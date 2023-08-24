@@ -2,24 +2,30 @@
 import ethers from "ethers"
 import bcrypt  from "bcryptjs";
 import CryptoJS from "crypto-js";
+import bip39 from "bip39"
 
-export const validateMnemonic = async (mnemonic: string) => {
-  try {
-    await ethers.utils.isValidMnemonic(mnemonic);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+// export const validateMnemonic = async (mnemonic: string) => {
+//   try {
+//     await bip39.validateMnemonic(mnemonic);
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };
 
 
 
 export const checkAccountExists = async (inputValues:string) => {
-  let isWalletExits = validateMnemonic(inputValues);
-  if (!isWalletExits) {
+  try {
+    console.log("input values")
+    const isWalletExists = await ethers.utils.isValidMnemonic(inputValues.toString());
+    console.log("input values" ,isWalletExists);
+
+    return isWalletExists;
+  } catch (error) {
+    console.error("Error validating mnemonic:", error);
     return false;
   }
-  return true;
 };
 
 
@@ -44,7 +50,6 @@ export const encryptMnemonic = async (mnemonic:string,password:string) => {
      }
    );
 
-  // Encrypt the data
   const encryptedData = cipher.toString();
 
   return encryptedData;
@@ -61,8 +66,6 @@ export const decryptMnemonic = async (encryptedMnemonic: string, password:string
       padding: CryptoJS.pad.Pkcs7,
     }
   );
-
-  // Decrypt the data
   const decryptedData = cipher.toString(CryptoJS.enc.Utf8);
 
   return decryptedData;
