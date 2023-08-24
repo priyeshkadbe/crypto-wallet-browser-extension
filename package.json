@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm-watch",
-    "pk": "next dev",
+    "local": "next dev",
     "build": "next build && next export && npm run lint:build",
     "lint:build": "mv out/_next out/assets && sed -i 's/\\/_next/\\/assets/g' out/**.html",
     "lint": "next lint"

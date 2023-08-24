@@ -1,7 +1,7 @@
 import { HashRouter, Navigate, Routes, Route, Link } from "react-router-dom";
 import Login from "@/components/Auth/Login";
 
-import ImportExisiting from "@/components/wallet/import-exisiting";
+import ImportExisiting from "@/components/wallet/import-exisiting/index";
 import WalletHome from "@/components/wallet/wallet-home";
 import HomePage from "@/components/Home/Home";
 import ForgotPassword from "@/components/Auth/ForgotPassword";
