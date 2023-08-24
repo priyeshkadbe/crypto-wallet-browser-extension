@@ -31,27 +31,29 @@ export const checkAccountExists = async (inputValues:string) => {
 
 export const createWallet = async(mnemonic:string) => {
   try {
-    const { address, publicKey, privateKey } = await ethers.Wallet.fromMnemonic(mnemonic);
-    return true
-    // return { address, publicKey, privateKey };
+    const wallet = await ethers.Wallet.fromMnemonic(mnemonic.toString());
+    return {
+      address: wallet.address,
+      publicKey: wallet.publicKey,
+      privateKey: wallet.privateKey,
+    };
   } catch (error) {
     return error;
   }
 }
 
+
+
+
+
 export const encryptMnemonic = async (mnemonic:string,password:string) => {
 
    const cipher = CryptoJS.AES.encrypt(
      mnemonic,
-     CryptoJS.enc.Utf8.parse(password),
-     {
-       mode: CryptoJS.mode.CBC,
-       padding: CryptoJS.pad.Pkcs7,
-     }
+    password
    );
 
   const encryptedData = cipher.toString();
-
   return encryptedData;
 }
 
@@ -60,36 +62,22 @@ export const encryptMnemonic = async (mnemonic:string,password:string) => {
 export const decryptMnemonic = async (encryptedMnemonic: string, password:string) => {
   const cipher = CryptoJS.AES.decrypt(
     encryptedMnemonic,
-    CryptoJS.enc.Utf8.parse(password),
-    {
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    }
+    password
   );
   const decryptedData = cipher.toString(CryptoJS.enc.Utf8);
-
   return decryptedData;
 }
 
 
 export const encryptPassword = (password: string) => {
-  // Generate a random salt
   const salt = bcrypt.genSaltSync(10);
-
-  // Hash the password with the salt
   const hashedPassword = bcrypt.hashSync(password, salt);
-
-  // Return the encrypted password
   return hashedPassword;
 };
 
 export const comparePassword = (enteredPassword: string, encryptedPassword: string) => {
-
   const salt = encryptedPassword?.slice(0, 24);
-
   const hashedPasswordAttempt = bcrypt.hashSync(enteredPassword, salt);
-
-  // Compare the hashed passwords
   return bcrypt.compareSync(hashedPasswordAttempt, encryptedPassword);
 };
 

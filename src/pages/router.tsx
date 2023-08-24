@@ -18,20 +18,22 @@ export default function Router() {
   return (
     <div>
       <HashRouter>
-        <Routes>
-          <Route path="/" element={<Signup />} />
-          <Route index path="/home" element={<HomePage />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-          <Route path="/import-existing" element={<ImportExisiting />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/create-new" element={<WalletHome />} />
-          <Route
-            path="/enter-recovery-phrase"
-            element={<EnterRecoveryPhrase />}
-          />
-          <Route path="/new-password" element={<NewPassword />} />
-          {/* <Route path="/add-new-network" element={<AddNewNetwork/>} /> */}
-        </Routes>
+        <div >
+          <Routes>
+            <Route path="/" element={<Signup />} />
+            <Route index path="/home" element={<HomePage />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="/import-existing" element={<ImportExisiting />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/create-new" element={<WalletHome />} />
+            <Route
+              path="/enter-recovery-phrase"
+              element={<EnterRecoveryPhrase />}
+            />
+            <Route path="/new-password" element={<NewPassword />} />
+            {/* <Route path="/add-new-network" element={<AddNewNetwork/>} /> */}
+          </Routes>
+        </div>
       </HashRouter>
     </div>
   );

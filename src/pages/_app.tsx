@@ -8,7 +8,13 @@ import { Provider } from "react-redux";
 export default function App({ Component, pageProps }: AppProps) {
    const [render, setRender] = useState(false);
    useEffect(() => setRender(true), []);
-   return render ? <Provider store={store}><Component {...pageProps} /></Provider> : null;
+   return render ? (
+     <Provider store={store}>
+       <div >
+         <Component {...pageProps} />
+       </div>
+     </Provider>
+   ) : null;
    
 
 }

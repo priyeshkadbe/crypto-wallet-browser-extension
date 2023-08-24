@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { SecretRecoveryPhase } from "./secret-recovery-phrase";
 import {
   checkAccountExists,
+  decryptMnemonic,
   encryptMnemonic,
-  storeMnemonics,
+  encryptPassword,
   storePassword,
-  encryptPassword
+  storeMnemonics,
+  createWallet
 } from "@/services/accountServices";
 import {Password} from "./password";
 import { mnemonicToSeed } from "ethers/lib/utils";
@@ -51,12 +53,20 @@ export default function ImportExisting() {
   //   }
   // };
 
-  const saveToStorage = () => {
-    storePassword(encryptPassword(formData.password));
-    storeMnemonics(formData.secretPhrase);
-    console.log(localStorage.getItem("password"));
-    console.log(localStorage.getItem(""));
+  const saveToStorage = async () => {
+    storePassword(await encryptPassword(formData.password));
 
+    storeMnemonics(
+      await encryptMnemonic(
+        formData.secretPhrase,
+        formData.password
+      )
+    );
+    // let {address,account} = await createWallet(formData.secretPhrase);
+    //await console.log('wallet',address)
+    await console.log(localStorage.getItem("password"));
+    await console.log(localStorage.getItem("mnemonic"));
+    
     navigate('/home');
   };
 
@@ -69,24 +79,6 @@ export default function ImportExisting() {
   const handlePrevStep = () => {
     setStep(step - 1);
   };
-
-  // const handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   // const { password, mnemonic } = e.target;
-  //   // setFormData({
-  //   //   ...formData,
-  //   //   [mnemonic]: mnemonic,
-  //   // });
-  // };
-
-  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   // Perform form submission or other actions here
-  //   navigate("/home");
-  //   console.log(formData);
-  // };
-
 
 
   const handleStageClick = (stepNumber: number) => {

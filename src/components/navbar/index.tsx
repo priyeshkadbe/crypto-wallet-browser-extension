@@ -59,7 +59,7 @@ function Navbar() {
 
   return (
     <div>
-      <div className="bg-[#4C4AA1] w-screen flex justify-between items-center h-[80px] px-4 relative">
+      <div className="bg-[#4C4AA1]   flex justify-between items-center px-4 relative py-3 ">
         <div className="flex w-full justify-between gap-1">
           {Object.keys(icons).map((key) => (
             <DropdownButton
@@ -70,7 +70,7 @@ function Navbar() {
           ))}
         </div>
       </div>
-      {renderModal()}
+      <div className="flex justify-center ">{renderModal()}</div>
     </div>
   );
 }

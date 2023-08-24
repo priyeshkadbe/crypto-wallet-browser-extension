@@ -10,15 +10,8 @@ html, body {
   min-height: 600px;
   overflow-y: auto; 
   overflow-x:hidden;
+
 }
 
-/*
-@layer base{
-  body{
-  @apply min-w-min
-  @apply min-h-min
-  @apply overflow-x-hidden
-  @apply overflow-y-auto
-  }
-}
-*/
+
+
