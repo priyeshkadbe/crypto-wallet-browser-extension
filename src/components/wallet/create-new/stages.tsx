@@ -10,12 +10,11 @@ interface Stage {
 
 interface StagesProps {
   currentStep: number;
-  onStageClick: (stepNumber: number) => void; // Add a callback for stage click
+
 }
 
 export default function Stages({
   currentStep,
-  onStageClick,
 }: StagesProps) {
   const stages: Stage[] = [
     { number: 1, text: "Secret Recovery Phrase" },
@@ -37,7 +36,7 @@ export default function Stages({
               key={stage.number}
               className={`relative z-10 flex  items-center justify-around 
               `}
-              onClick={() => onStageClick(stage.number)}
+              // onClick={() => onStageClick(stage.number)}
             >
               <div
                 className={`h-16 w-16 rounded-full flex items-center  justify-center   border border-blue-500

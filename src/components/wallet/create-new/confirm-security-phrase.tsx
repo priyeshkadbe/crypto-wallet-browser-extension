@@ -62,56 +62,44 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
     return inputValues.every((value) => value.trim() !== "");
   };
 
-  // const handleNext =  async() => {
-  //   if (!isAllField()) {
-  //     toast.error("please fill all the fields");
-  //     return false;
-  //   }
-  //   console.log('mnemonic',inputValues.join(" "))
-  //   let isWalletExits = await ethers.utils.isValidMnemonic(
-  //     inputValues.join(" ")
-  //   );
-  //   console.log("isWalletExits", isWalletExits);
-  //   // if (!isWalletExits) {
-  //   //   toast.error("provided mnemonic(seed phrase) is incorrect");
-  //   //   return;
-  //   // }
 
-  //   // if (!bip39.validateMnemonic(inputValues.join(" "))) {
-  //   //   toast.error("provided mnemonic(seed phrase) is incorrect");
-  //   //   return
-  //   // }
-  //   if (isWalletExits) {
-  //     toast.success("exits");
-  //     secretPhrase = inputValues.join(" ");
-  //     console.log(secretPhrase);
+
+  // const handleNext = async () => {
+  //   try {
+  //     if (!isAllField()) {
+  //       toast.error("please fill all the fields");
+  //       return;
+  //     }
+  //     console.log(inputValues.join(" "));
+  //     // let isWalletExits = await ethers.utils.isValidMnemonic(
+  //     //   inputValues.join(" ")
+  //     // );
+  //     // if (!isWalletExits) {
+  //     //   toast.error("invalid mnemonic");
+  //     //   return;
+  //     // }
+  //     // secretPhrase = inputValues.toString();
+  //     if (secretPhrase === inputValues.toString()) {
+  //       console.log("yes")
+  //     }
   //     onNext();
-  //   } else {
-  //     toast.error("provided mnemonic(seed phrase) is incorrect");
+  //   } catch (error) {
+  //     toast.error("something went wrong");
   //   }
-
-  //   // if (isWalletExits==='true') {
-  //   //   onNext();
-  //   // }
-
   // };
 
   const handleNext = async () => {
+    console.log("running")
     try {
       if (!isAllField()) {
         toast.error("please fill all the fields");
         return;
       }
       console.log(inputValues.join(" "));
-      let isWalletExits = await ethers.utils.isValidMnemonic(
-        inputValues.join(" ")
-      );
-      if (!isWalletExits) {
-        toast.error("invalid mnemonic");
-        return;
-      }
-      secretPhrase = inputValues.toString();
-      onNext();
+
+      // Your logic here
+
+      onNext(); // Call the callback function to go to the next step
     } catch (error) {
       toast.error("something went wrong");
     }
@@ -170,7 +158,7 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
           // onClick={onConfirm as () => void} // Cast to correct event type
           // Pass event argument if needed
           // onClick={() => navigate("/new-password")}
-          onClick={() => handleNext()}
+          onClick={ handleNext}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Next

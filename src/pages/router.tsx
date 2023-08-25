@@ -10,28 +10,58 @@ import EnterRecoveryPhrase from "@/components/Auth/EnterRecoveryPhrase";
 import Signup from "@/components/Auth/Signup";
 import AddNewNetwork from "@/components/Networks/AddNewNetwork";
 
-
-
-
+import { useLogin } from "../providers/LoginProvider"; // Import useLogin from your LoginContextProvider
+import { useEffect } from "react";
 
 export default function Router() {
+  const { isPasswordPresent, isLoggedIn } = useLogin();
+
+  useEffect(() => {
+    
+  },[isLoggedIn])
+
   return (
     <div>
       <HashRouter>
         <div>
           <Routes>
-            <Route path="/" element={<Signup />} />
-            <Route index path="/home" element={<HomePage />} />
+            {isPasswordPresent() ? (
+              // If password is present, show the login page
+              <>
+                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
+              </>
+            ) : (
+              // If password is not present, show the signup page
+              <>
+                <Route path="/" element={<Signup />} />
+                <Route path="/signup" element={<Signup />} />
+              </>
+            )}
+
+            {isLoggedIn && (
+              // If logged in, show the home page
+              <Route
+                index
+                path="/home"
+                element={<HomePage />}
+                
+              />
+            )}
+
+            {!isLoggedIn && (
+              // If not logged in, redirect to login page
+              <Route
+                index
+                path="/home"
+                element={<Navigate to="/login" replace />}
+              />
+            )}
+
             <Route path="*" element={<Navigate to="/login" replace />} />
             <Route path="/import-existing" element={<ImportExisiting />} />
             <Route path="/create-new" element={<CreateNew />} />
-            <Route path="/login" element={<Login />} />
-            {/* <Route
-              path="/enter-recovery-phrase"
-              element={<EnterRecoveryPhrase />}
-            /> */}
-            {/* <Route path="/new-password" element={<NewPassword />} /> */}
-            {/* <Route path="/add-new-network" element={<AddNewNetwork/>} /> */}
+            {/* Add more routes as needed */}
           </Routes>
         </div>
       </HashRouter>

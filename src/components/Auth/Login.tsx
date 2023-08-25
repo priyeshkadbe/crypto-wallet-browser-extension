@@ -3,34 +3,39 @@
 import Favicon from "@/../public/favicon-16.png"
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactSVG } from "react-svg";
-import Home from "../Home/Home"
-import {Logo} from "../Logo"
 
+import {Logo} from "../Logo"
+import { useLogin } from "../../providers/LoginProvider"
+import {ToastContainer,toast} from "react-toastify"
 
 import { ArrowDownCircleIcon } from "@heroicons/react/20/solid";
 
 function Login() {
   const [inputValue, setInputValue] = useState("");
-  const [isLogged, setIsLogged] = useState(false);
+  const {login,isLoggedIn} = useLogin()
   const navigate = useNavigate();
 
-  const handleUnlockClick = () => {
-    // You can perform any necessary validation here before unlocking.
-    // If validation passes, set isLogged to true.
-    if (inputValue === "yourPassword") {
-      setIsLogged(true);
-    } else {
-      // Handle incorrect password or show an error message.
-      // For simplicity, you can just log an error here.
-      console.error("Incorrect password");
+  useEffect(() => {
+    if(isLoggedIn){
+      navigate("/home")
     }
-  };
-  if (!isLogged) {
+  },[isLoggedIn,navigate])
+
+  const handleLogin = () => {
+    if (inputValue === "") {
+        toast.error("please fill the password")
+    }
+    login(inputValue.toString())
+    if (isLoggedIn) {
+      navigate('/home')
+    }
+  }
     return (
       <div className=" flex flex-col justify-center items-center gap-4 w-full">
+        <ToastContainer/>
         <div>
           {/* <ArrowDownCircleIcon className="h-6 w-6 text-blue-500" /> */}
           <Logo />
@@ -51,7 +56,7 @@ function Login() {
             />
             <button
               className="bg-[#373583] p-2 rounded-lg  flex-1 self-stretch text-white text-center text-xl"
-              onClick={() => navigate("/home")}
+              onClick={() => handleLogin()}
             >
               unlock
             </button>
@@ -65,8 +70,7 @@ function Login() {
         </div>
       </div>
     );
-  }
-  return <Home />;
+  
 }
 
 export default Login;
