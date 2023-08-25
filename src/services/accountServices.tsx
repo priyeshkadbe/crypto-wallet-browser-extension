@@ -43,7 +43,14 @@ export const createWallet = async(mnemonic:string) => {
 }
 
 
-
+export const generateMnemonic = async () => {
+  try {
+    const mnemonic = await ethers.Wallet.createRandom()
+    return mnemonic
+  } catch (error) {
+    return {error}
+  }
+}
 
 
 export const encryptMnemonic = async (mnemonic:string,password:string) => {
