@@ -15,9 +15,9 @@ const DropDownLayout: React.FC<DropDownLayoutProps> = ({
 }) => {
   return (
     <div className="fixed px-2 top-0 left-0 right-0 bottom-0 z-50   flex justify-center items-center bg-gray-500 bg-opacity-50 ">
-      <div className="relative w-full md:w-96 md:transform md:-translate-y-36  bg-white rounded-lg shadow">
+      <div className="relative w-full md:w-96 md:transform md:-translate-y-36  bg-[#242526] rounded-lg shadow">
         <div className="flex items-center justify-between p-5 border-b rounded-t">
-          <h3 className="text-xl font-medium text-gray-900">{title}</h3>
+          <h1 className="text-xl font-medium text-gray-900">{title}</h1>
           <button
             type="button"
             className="text-blue-500 text-lg ml-auto inline-flex justify-center items-center"

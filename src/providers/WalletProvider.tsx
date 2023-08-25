@@ -20,14 +20,14 @@ export const WalletProvider = ({ children }: Props) => {
   const [mnemonic, setMnemonic] = useState("");
   const [accounts, setAccounts] = useState([]);
 
-  const fetchWallet = () => {
-    try {
-      const { address } = ethers.Wallet.fromMnemonic(mnemonic)
-      return address
-    } catch (error) {
-      return "something went wrong"
-    }
-  }
+  // const fetchWallet = () => {
+  //   try {
+  //     const { address } = ethers.Wallet.fromMnemonic(mnemonic)
+  //     return address
+  //   } catch (error) {
+  //     return "something went wrong"
+  //   }
+  // }
 
   const value = {
     mnemonic,

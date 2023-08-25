@@ -1,7 +1,6 @@
 import React, { ReactNode, useContext, useState } from "react";
 import bcrypt from "bcryptjs";
 import CryptoJS from "crypto-js";
-import {useWalletState} from "./WalletProvider"
 
 // Define the LoginContextType
 interface LoginContextType {
@@ -25,7 +24,7 @@ interface Props {
 export const LoginContextProvider = ({ children }: Props) => {
   // State to track whether the user is logged in or not
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const{}=useWalletState()
+  
 
   // Function to check if password is present
   const isPasswordPresent = () => {

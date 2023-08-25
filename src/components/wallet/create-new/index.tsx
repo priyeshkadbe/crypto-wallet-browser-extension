@@ -19,10 +19,10 @@ export default function ImportExisting() {
   const [step, setStep] = useState(1);
    const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { signup, isLoggedIn, setIsLoggedIn } = useLogin();
+  const { signup } = useLogin();
+
   useEffect(() => {
      console.log("ImportExisting re-rendered with isLoading:", isLoading);
-
   },[isLoading])
   // Define your state to hold form data
   const [formData, setFormData] = useState<FormData>({
@@ -104,6 +104,7 @@ export default function ImportExisting() {
           <ConfirmSecretRecoveryPhase
             secretPhrase={formData.secretPhrase}
             onNext={handleSignup}
+            setIsLoading={setIsLoading}
           />
         );
       default:
@@ -123,9 +124,8 @@ export default function ImportExisting() {
   // }
   return (
     <div>
-      <div>
-        <Stages currentStep={step} />
-        {isLoading ? (
+      {isLoading ? (
+        <div className="justify-center items-center">
           <RotatingLines
             strokeColor="grey"
             strokeWidth="5"
@@ -133,10 +133,13 @@ export default function ImportExisting() {
             width="96"
             visible={true}
           />
-        ) : (
-          renderForm()
-        )}
-      </div>
+        </div>
+      ) : (
+        <div>
+          <Stages currentStep={step} />
+          {renderForm()}
+        </div>
+      )}
     </div>
   );
 }

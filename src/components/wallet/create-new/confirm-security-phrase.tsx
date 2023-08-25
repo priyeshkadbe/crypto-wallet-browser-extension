@@ -14,11 +14,13 @@ import next from "next";
 interface ConfirmSecurityPhaseProps {
   secretPhrase: string;
   onNext: () => void;
+  setIsLoading: (value:boolean) => void;
 }
 
 export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = ({
   secretPhrase,
   onNext,
+  setIsLoading,
 }) => {
   const numberOfRows = 4; // Number of rows
   const inputsPerRow = 3; // Number of inputs per row
@@ -62,8 +64,6 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
     return inputValues.every((value) => value.trim() !== "");
   };
 
-
-
   // const handleNext = async () => {
   //   try {
   //     if (!isAllField()) {
@@ -89,8 +89,9 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
   // };
 
   const handleNext = async () => {
-    console.log("running")
+    console.log("running");
     try {
+      setIsLoading(true)
       if (!isAllField()) {
         toast.error("please fill all the fields");
         return;
@@ -158,7 +159,7 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
           // onClick={onConfirm as () => void} // Cast to correct event type
           // Pass event argument if needed
           // onClick={() => navigate("/new-password")}
-          onClick={ handleNext}
+          onClick={handleNext}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Next
