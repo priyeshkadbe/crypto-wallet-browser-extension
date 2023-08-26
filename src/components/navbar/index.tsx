@@ -36,6 +36,8 @@ function Navbar() {
     setActiveModal(null);
   };
 
+  
+
   const renderModal = () => {
     if (!activeModal) return null;
 
@@ -63,6 +65,7 @@ function Navbar() {
         <div className="flex w-full justify-between gap-1">
           {Object.keys(icons).map((key) => (
             <DropdownButton
+              text={key}
               key={key}
               icon={icons[key]}
               onClick={() => openModal(key)}

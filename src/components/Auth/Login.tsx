@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactSVG } from "react-svg";
+import { RotatingLines } from "react-loader-spinner";
 
 import {Logo} from "../Logo"
 import { useLogin } from "../../providers/LoginProvider"
@@ -15,24 +16,42 @@ import { ArrowDownCircleIcon } from "@heroicons/react/20/solid";
 
 function Login() {
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const {login,isLoggedIn} = useLogin()
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(isLoggedIn){
-      navigate("/home")
-    }
-  },[isLoggedIn,navigate])
+   
+  },[isLoggedIn])
 
   const handleLogin = () => {
     if (inputValue === "") {
         toast.error("please fill the password")
     }
-    login(inputValue.toString())
-    if (isLoggedIn) {
+    toast.success("ishanlelogin");
+    console.log("password is", inputValue)
+    const isLogged=login(inputValue)
+    if (isLogged) {
+      console.log("isLogged", isLogged);
       navigate('/home')
+      return
+    }
+    if (!isLogged) {
+      toast.error("invalid password")
+      return
     }
   }
+  if(isLoading){
+    return (
+      <RotatingLines
+        strokeColor="grey"
+        strokeWidth="5"
+        animationDuration="0.75"
+        width="96"
+        visible={true}
+      />
+    );
+    }
     return (
       <div className=" flex flex-col justify-center items-center gap-4 w-full">
         <ToastContainer/>
@@ -56,7 +75,7 @@ function Login() {
             />
             <button
               className="bg-[#373583] p-2 rounded-lg  flex-1 self-stretch text-white text-center text-xl"
-              onClick={() => handleLogin()}
+              onClick={ handleLogin}
             >
               unlock
             </button>

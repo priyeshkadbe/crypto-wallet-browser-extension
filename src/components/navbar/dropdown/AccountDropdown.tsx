@@ -44,12 +44,15 @@ const AccountContent = () => {
 
 const AccountDropdown: React.FC<AccountProps> = ({ onClose }) => {
   return (
-    <DropDownLayout
-      title="Account"
-      content={<AccountContent/>}
-      onClose={onClose}
-      icon={<UserCircleIcon className="h-6 w-6" />}
-    />
+ 
+      
+      <DropDownLayout
+        title="Account"
+        content={<AccountContent />}
+        onClose={onClose}
+        icon={<UserCircleIcon className="h-6 w-6" />}
+      />
+
   );
 };
 

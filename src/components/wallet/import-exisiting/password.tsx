@@ -7,22 +7,23 @@ import {} from "@/services/accountServices";
 import { ChangeEvent } from "react";
 
 interface PasswordProps {
-  password: string;
-  onPrev: () => void;
-  onNext: () => void;
+  setPassword: (pass: string) => void;
+  setIsSubmit: (sub: boolean) => void;
 }
 
-export const Password: React.FC<PasswordProps> = ({
-  password,
-  onPrev,
-  onNext,
-})=> {
+
+
+export const Password: React.FC<PasswordProps> = ({ setPassword, setIsSubmit }) => {
   const navigate = useNavigate();
 
   const [pass, setPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  
 
   const onSubmit = () => {
+    if (isSubmitting) return;
     if (pass !== confirmPass) {
       toast.error("The passwords do not match");
       return;
@@ -31,9 +32,10 @@ export const Password: React.FC<PasswordProps> = ({
       toast.error("The password must be greater than 5 characters");
       return;
     }
-    password = pass
-    console.log(password);
-    onNext()
+    setIsSubmitting(true); 
+    setPassword(pass.toString());
+    console.log(pass);
+    setIsSubmit(true);
   };
 
   return (
@@ -71,13 +73,6 @@ export const Password: React.FC<PasswordProps> = ({
       <div className="mt-4">
         <button
           type="button"
-          onClick={onPrev}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Previous
-        </button>
-        <button
-          type="button"
           onClick={onSubmit}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
@@ -86,4 +81,4 @@ export const Password: React.FC<PasswordProps> = ({
       </div>
     </div>
   );
-}
+};

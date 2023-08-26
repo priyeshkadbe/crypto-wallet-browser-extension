@@ -63,8 +63,8 @@ function HomePage() {
     <div className="md:w-[800px]">
       <Navbar />
       <div className="flex flex-col my-4 justify-center items-center  ">
-        <div className="flex gap-2 p-2 m-2 bg-[#807DC0] rounded-full cursor-text">
-          <h1>0x34....5</h1>
+        <div className="flex gap-2 p-2 m-2 bg-gray-500 rounded-full cursor-text">
+          <h1 className="text-gray-100">0x34....5</h1>
           <ClipboardDocumentIcon className="h-4 w-4" />
         </div>
         <div className="m-2 my-4">

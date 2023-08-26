@@ -13,14 +13,12 @@ import { ethers } from "ethers";
 import next from "next";
 interface ConfirmSecurityPhaseProps {
   secretPhrase: string;
-  onNext: () => void;
-  setIsLoading: (value:boolean) => void;
+  setIsSubmit:(submit:boolean)=>void
 }
 
 export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = ({
   secretPhrase,
-  onNext,
-  setIsLoading,
+  setIsSubmit,
 }) => {
   const numberOfRows = 4; // Number of rows
   const inputsPerRow = 3; // Number of inputs per row
@@ -89,22 +87,19 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
   // };
 
   const handleNext = async () => {
-    console.log("running");
-    try {
-      setIsLoading(true)
+    
       if (!isAllField()) {
         toast.error("please fill all the fields");
         return;
       }
       console.log(inputValues.join(" "));
 
-      // Your logic here
-
-      onNext(); // Call the callback function to go to the next step
-    } catch (error) {
-      toast.error("something went wrong");
-    }
-  };
+     if (inputValues.join(" ").toString() !== secretPhrase.toString()) {
+        toast.error("wrong confirm ")
+     }
+    setIsSubmit(true);
+    } 
+  
 
   const handleClear = () => {
     const clearedValues = Array(inputValues.length).fill("");

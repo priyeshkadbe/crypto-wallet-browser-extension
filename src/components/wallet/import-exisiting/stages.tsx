@@ -10,12 +10,12 @@ interface Stage {
 
 interface StagesProps {
   currentStep: number;
-  onStageClick: (stepNumber: number) => void; // Add a callback for stage click
+   // Add a callback for stage click
 }
 
 export default function Stages({
   currentStep,
-  onStageClick,
+  
 }: StagesProps) {
   const stages: Stage[] = [
     { number: 1, text: "Enter SecretRecoveryPhrase" },

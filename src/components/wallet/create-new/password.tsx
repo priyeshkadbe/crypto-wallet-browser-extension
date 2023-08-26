@@ -7,14 +7,14 @@ import {} from "@/services/accountServices";
 import { ChangeEvent } from "react";
 
 interface PasswordProps {
-  password: string;
-  onPrev: () => void;
+  setPassword:(pass:string)=>void
+
   onNext: () => void;
 }
 
 export const Password: React.FC<PasswordProps> = ({
-  password,
-  onPrev,
+  setPassword,
+
   onNext,
 }) => {
   const navigate = useNavigate();
@@ -31,8 +31,8 @@ export const Password: React.FC<PasswordProps> = ({
       toast.error("The password must be greater than 5 characters");
       return;
     }
-    password = pass;
-    console.log(password);
+    setPassword(pass)
+    console.log(pass);
     onNext();
   };
 

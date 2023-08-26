@@ -19,16 +19,22 @@ export default function ImportExisting() {
   const [step, setStep] = useState(1);
    const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { signup } = useLogin();
+  const [secretPhrase, setSecretPhrase] = useState("");
+  const [password, setPassword] = useState("")
+  const [isSubmit, setIsSubmit] = useState(false);
 
-  useEffect(() => {
-     console.log("ImportExisting re-rendered with isLoading:", isLoading);
-  },[isLoading])
+  const { signup,isLoggedIn } = useLogin();
+
+  // useEffect(() => {
+  //    console.log("ImportExisting re-rendered with isLoading:", isLoading);
+  // },[isSubmit])
   // Define your state to hold form data
-  const [formData, setFormData] = useState<FormData>({
-    password: "",
-    secretPhrase: "",
-  });
+  // const [formData, setFormData] = useState<FormData>({
+  //   password: "",
+  //   secretPhrase: "",
+  // });
+
+  useEffect(() => {}, [isLoggedIn]);
 
 
   const handleNextStep = () => {
@@ -50,26 +56,29 @@ export default function ImportExisting() {
   //   }
   // };
 
+  
 
   const handleSignup = async () => {
     console.log("running2");
-    setIsLoading(true);
- 
-      
-      const isSignIn = await signup(formData.secretPhrase, formData.password);
+    // setIsLoading(true);
+    console.log("data sending",secretPhrase.toString(), password.toString());
+      const isSignIn = await signup(secretPhrase.toString(),password.toString());
       console.log("isSignIn", isSignIn);
       if (isSignIn) {
         toast.success("logging")
         console.log("yes")
         // setIsLoggedIn(true);
         navigate("/home")
-        setIsLoading(false)
+        // setIsLoading(false)
       }
       toast.error("something went wrong in the singup process")
-      setIsLoading(false)
-    
-    
+      // setIsLoading(false)
   };
+
+
+  if (isSubmit) {
+    handleSignup();
+  }
 
   // const validateSecretPhrase = () => {};
 
@@ -86,7 +95,7 @@ export default function ImportExisting() {
       case 1:
         return (
           <SecretRecoveryPhase
-            secretPhrase={formData.secretPhrase}
+            setSecretPhrase={setSecretPhrase}
             onNext={handleNextStep}
           />
         );
@@ -94,17 +103,15 @@ export default function ImportExisting() {
       case 2:
         return (
           <Password
-            password={formData.password}
-            onPrev={handlePrevStep}
+            setPassword={setPassword}
             onNext={handleNextStep}
           />
         );
       case 3:
         return (
           <ConfirmSecretRecoveryPhase
-            secretPhrase={formData.secretPhrase}
-            onNext={handleSignup}
-            setIsLoading={setIsLoading}
+            secretPhrase={secretPhrase}
+            setIsSubmit={setIsSubmit}
           />
         );
       default:

@@ -6,12 +6,12 @@ import { ethers } from "ethers";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 interface SecretRecoveryPhaseProps {
-  secretPhrase: string;
+  setSecretPhrase:(phrase:string)=> void;
   onNext: () => void;
 }
 
 export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
-  secretPhrase,
+  setSecretPhrase,
   onNext,
 }) => {
   const [mnemonics, setMnemonics] = useState("");
@@ -30,8 +30,8 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
       const entropy = ethers.utils.randomBytes(16);
       const mnemonic = ethers.utils.entropyToMnemonic(entropy);
       setMnemonics(mnemonic);
-      secretPhrase = mnemonic;
-      console.log(secretPhrase);
+      setSecretPhrase(mnemonic.toString());
+      console.log(mnemonic.toString);
     } catch (error) {
       return { error };
     }

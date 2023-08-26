@@ -1,90 +1,91 @@
-import React, { ReactNode, useContext, useState } from "react";
+import React, { ReactNode, useContext, useState, useEffect } from "react";
 import bcrypt from "bcryptjs";
 import CryptoJS from "crypto-js";
+import useLocalStorage from "use-local-storage";
 
 // Define the LoginContextType
 interface LoginContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
   login: (enteredPassword: string) => boolean;
-  logout: () => void;
+  logout: () => boolean;
   isPasswordPresent: () => boolean; // Add this function
   signup: (mnemonics: string, password: string) => boolean;
+  isSignup: boolean;
+  signOut:()=> boolean;
 }
 
-// Create the LoginContext with an initial value of null
 const LoginContext = React.createContext<LoginContextType | null>(null);
 
-// Props for the LoginContextProvider
 interface Props {
   children: ReactNode;
 }
 
-// The LoginContextProvider component
-export const LoginContextProvider = ({ children }: Props) => {
-  // State to track whether the user is logged in or not
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
 
-  // Function to check if password is present
+export const LoginContextProvider = ({ children }: Props) => {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [isSignup, setSignup] = useState(false);
+  const [localPassword, setLocalPassword] = useState<string | null>(null);
+
+  useEffect(() => {
+    const validate= async()=>{
+      const pass = await localStorage.getItem("password");
+      console.log('useFee')
+    if (pass !== null && pass !== "") {
+      setLocalPassword(pass);
+      setSignup(true);
+    } else {
+      setLocalPassword(null);
+      setSignup(false);
+    }
+    }
+    validate()
+  }, []);
+
   const isPasswordPresent = () => {
     return localStorage.getItem("password") !== null;
   };
 
-  // Function to simulate a login
-  const login = (enteredPassword: string):boolean => {
-    // const hashedPassword = localStorage.getItem("password");
-    // if (
-    //   hashedPassword !== null &&
-    //   comparePassword(enteredPassword, hashedPassword)
-    // ) {
-    //   // The password is correct, so the user is logged in.
-    //   setIsLoggedIn(true);
-    // } else {
-    //   // The password is incorrect, so the user is not logged in.
-    //   setIsLoggedIn(false);
-    // }
-
-    try {
-      const hashedPassword = localStorage.getItem("password");
-      if (
-        hashedPassword !== null &&
-        comparePassword(enteredPassword, hashedPassword)
-      ) {
-        // The password is correct, so the user is logged in.
-        setIsLoggedIn(true);
-        return true
-      }
-      setIsLoggedIn(false)
-      return false;
-    } catch (error) {
-      setIsLoggedIn(false);
-      return false
+  const login = (enteredPassword: string): boolean => {
+    console.log("local password", localPassword);
+    console.log("enteredPassword", enteredPassword);
+    if (localPassword === enteredPassword) {
+      setIsLoggedIn(true);
+      return true;
     }
+    setIsLoggedIn(false);
+    return false;
   };
 
-  const signup = (mnemonics: string, password: string):boolean => {
-    try {
-      const encryptedPassword = hashedPassword(password);
-      localStorage.setItem("password", encryptedPassword);
-      const encryptedMnemonic = encryptMnemonic(mnemonics, password);
-      localStorage.setItem("mnemonic", encryptedMnemonic.toString());
-      const isLogin = login(password)
-      if (isLoggedIn) {
-        return true
-      }
-      return false
-    } catch (error) {
-      return false
-    }
 
+
+  const signup = (mnemonics: string, password: string): boolean => {
+    console.log("setting password", password);
+    localStorage.setItem("password", password);
     
-    //login(password);
+    const encryptedMnemonic = encryptMnemonic(mnemonics, password);
+    localStorage.setItem("mnemonic", encryptedMnemonic.toString());
+    const isLogin = login(password);
+    if (isLogin) {
+      return true;
+    }
+    return false;
+  };
+
+  const signOut = ():boolean => {
+    const removePassword = localStorage.removeItem("password");
+    const removeMnemonic = localStorage.removeItem("mnemonic");
+    setSignup(false);
+    setIsLoggedIn(false);
+    return true;
   };
 
   // Function to simulate a logout
-  const logout = () => {
+  const logout = ():boolean => {
     setIsLoggedIn(false);
+    return true
   };
 
   // Define the value object to be provided to consumers
@@ -95,6 +96,8 @@ export const LoginContextProvider = ({ children }: Props) => {
     logout,
     isPasswordPresent,
     signup,
+    isSignup,
+    signOut,
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { SecretRecoveryPhase } from "./secret-recovery-phrase";
@@ -9,112 +9,78 @@ import {
   encryptPassword,
   storePassword,
   storeMnemonics,
-  createWallet
+  createWallet,
 } from "@/services/accountServices";
-import {Password} from "./password";
+import { Password } from "./password";
 import { mnemonicToSeed } from "ethers/lib/utils";
 import Stages from "./stages";
-
-
-interface FormData {
-  password: string;
-  secretPhrase: string;
-}
+import { useLogin } from "@/providers/LoginProvider"
+import { RotatingLines } from "react-loader-spinner";
+import { ToastContainer,toast } from "react-toastify";
 
 
 export default function ImportExisting() {
-
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
+  const {login,signup}=useLogin()
 
   // Define your state to hold form data
-  const [formData, setFormData] = useState<FormData>({
-    password: "",
-    secretPhrase: "",
-  });
+  
+ 
+  
+  const [password, setPassword] = useState("");
+  const [secretPhrase, setSecretPhrase] = useState("");
+  const [isSubmit, setIsSubmit] = useState(false);
+
+   useEffect(() => {
+     if (isSubmit) {
+       handleSubmit();
+     }
+   }, [isSubmit]);
 
   const handleNextStep = () => {
     setStep(step + 1);
   };
 
 
-  // const handleNextStep = async () => {
-  //   try {
-  //     const accountExists = await checkAccountExists(
-  //       formData.secretPhrase.toString()
-  //     );
-  //     if (accountExists) {
-  //       setStep(step + 1);
-  //     } else {
-  //       console.log("Wrong seed phrase");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error checking account existence:", error);
-  //   }
-  // };
-
-  const saveToStorage = async () => {
-    storePassword(await encryptPassword(formData.password));
-
-    storeMnemonics(
-      await encryptMnemonic(
-        formData.secretPhrase,
-        formData.password
-      )
-    );
-    // let {address,account} = await createWallet(formData.secretPhrase);
-    //await console.log('wallet',address)
-    await console.log(localStorage.getItem("password"));
-    await console.log(localStorage.getItem("mnemonic"));
-    
-    navigate('/home');
-  };
 
 
-  const validateSecretPhrase = () => {
-    
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    const isAuth = await signup(secretPhrase.toString(),password.toString());
+    if (isAuth) {
+      setIsLoading(false);
+      console.log("isAuth",isAuth)
+      navigate("/home")
+      return
+    }
+    toast.error("something went wrong in the validation")
+    setIsLoading(false)
+
   }
 
-
-  const handlePrevStep = () => {
-    setStep(step - 1);
-  };
-
-
+ 
   const handleStageClick = (stepNumber: number) => {
-
     if (stepNumber < step) {
       setStep(stepNumber);
     }
   };
 
 
-  const handleRecoverPhraseSubmit = () => {
-    
-  }
-
-  const handlePasswordSubmit = () => {
-    
-  }
 
   const renderForm = () => {
     switch (step) {
       case 1:
         return (
           <SecretRecoveryPhase
-            secretPhrase={formData.secretPhrase}
+            setSecretPhrase={setSecretPhrase}
             onNext={handleNextStep}
           />
         );
-      
       case 2:
-        return (
-          <Password
-            password={formData.password}
-            onPrev={handlePrevStep}
-            onNext={saveToStorage}
-          />
-        );
+        return <Password setPassword={setPassword} setIsSubmit={setIsSubmit} />;
       default:
         return null;
     }
@@ -122,11 +88,23 @@ export default function ImportExisting() {
 
   return (
     <div>
-      <div>
-
-        <Stages currentStep={step} onStageClick={handleStageClick} />
-        {renderForm()}
-      </div>
+      <ToastContainer/>
+      {isLoading ? (
+        <div className="justify-center items-center">
+          <RotatingLines
+            strokeColor="grey"
+            strokeWidth="5"
+            animationDuration="0.75"
+            width="96"
+            visible={true}
+          />
+        </div>
+      ) : (
+        <div>
+          <Stages currentStep={step} />
+          {renderForm()}
+        </div>
+      )}
     </div>
   );
 }

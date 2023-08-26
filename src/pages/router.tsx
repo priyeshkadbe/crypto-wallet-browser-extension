@@ -12,20 +12,21 @@ import AddNewNetwork from "@/components/Networks/AddNewNetwork";
 
 import { useLogin } from "../providers/LoginProvider"; // Import useLogin from your LoginContextProvider
 import { useEffect } from "react";
+import Home from ".";
 
 export default function Router() {
-  const { isPasswordPresent, isLoggedIn } = useLogin();
+  const {  isLoggedIn, isSignup } = useLogin();
 
-  useEffect(() => {
+  // useEffect(() => {
     
-  },[isLoggedIn])
+  // },[isLoggedIn,isSignup])
 
   return (
     <div>
       <HashRouter>
         <div>
           <Routes>
-            {isPasswordPresent() ? (
+            {isSignup ? (
               // If password is present, show the login page
               <>
                 <Route path="/" element={<Login />} />
@@ -36,17 +37,18 @@ export default function Router() {
               <>
                 <Route path="/" element={<Signup />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="*" element={<Navigate to="/login" replace />} />
+                <Route path="/import-existing" element={<ImportExisiting />} />
+                <Route path="/create-new" element={<CreateNew />} />
               </>
             )}
 
-            {isLoggedIn && (
+            {isLoggedIn && isSignup && (
               // If logged in, show the home page
-              <Route
-                index
-                path="/home"
-                element={<HomePage />}
-                
-              />
+              <>
+                <Route path="/" element={<HomePage />} />
+                <Route index path="/home" element={<HomePage />} />
+              </>
             )}
 
             {!isLoggedIn && (
@@ -58,9 +60,6 @@ export default function Router() {
               />
             )}
 
-            <Route path="*" element={<Navigate to="/login" replace />} />
-            <Route path="/import-existing" element={<ImportExisiting />} />
-            <Route path="/create-new" element={<CreateNew />} />
             {/* Add more routes as needed */}
           </Routes>
         </div>

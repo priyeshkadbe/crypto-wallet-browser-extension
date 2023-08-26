@@ -12,12 +12,12 @@ import * as bip39 from "bip39"
 import { ethers } from "ethers";
 import next from "next";
 interface SecretRecoveryPhaseProps {
-  secretPhrase: string;
+  setSecretPhrase: (phrase:string)=>void;
   onNext: () => void;
 }
 
 export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
-  secretPhrase,
+  setSecretPhrase,
   onNext,
 }) => {
   const numberOfRows = 4; // Number of rows
@@ -109,7 +109,7 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
         toast.error("invalid mnemonic")
         return
       }
-      secretPhrase=inputValues.toString();
+      setSecretPhrase(inputValues.join(" ").toString());
       onNext();
     } catch (error) {
       toast.error("something went wrong");
