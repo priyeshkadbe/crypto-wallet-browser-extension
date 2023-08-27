@@ -12,7 +12,7 @@ function Signup() {
 
 
   return (
-    <div className="flex flex-col justify-center items-center gap-4 ">
+    <div className="flex bg-[#242526] flex-col justify-center items-center gap-4 h-screen md:h-96 ">
       <Logo />
       <div className="">
         <h1 className="text-3xl text-[#373583] my-2 px-4 whitespace-nowrap">

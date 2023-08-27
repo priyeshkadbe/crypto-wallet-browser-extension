@@ -10,10 +10,6 @@ import Stages from "./stages";
 import { ConfirmSecretRecoveryPhase } from "./confirm-security-phrase";
 import { toast } from "react-toastify";
 
-interface FormData {
-  password: string;
-  secretPhrase: string;
-}
 
 export default function ImportExisting() {
   const [step, setStep] = useState(1);
@@ -23,7 +19,7 @@ export default function ImportExisting() {
   const [password, setPassword] = useState("")
   const [isSubmit, setIsSubmit] = useState(false);
 
-  const { signup,isLoggedIn } = useLogin();
+  const { signup, isLoggedIn, localPassword } = useLogin();
 
   // useEffect(() => {
   //    console.log("ImportExisting re-rendered with isLoading:", isLoading);
@@ -34,7 +30,7 @@ export default function ImportExisting() {
   //   secretPhrase: "",
   // });
 
-  useEffect(() => {}, [isLoggedIn]);
+  // useEffect(() => {}, [isLoggedIn, localPassword]);
 
 
   const handleNextStep = () => {
@@ -60,35 +56,34 @@ export default function ImportExisting() {
 
   const handleSignup = async () => {
     console.log("running2");
-    // setIsLoading(true);
+    setIsLoading(true);
     console.log("data sending",secretPhrase.toString(), password.toString());
       const isSignIn = await signup(secretPhrase.toString(),password.toString());
       console.log("isSignIn", isSignIn);
       if (isSignIn) {
         toast.success("logging")
         console.log("yes")
-        // setIsLoggedIn(true);
         navigate("/home")
-        // setIsLoading(false)
+        setIsLoading(false)
       }
-      toast.error("something went wrong in the singup process")
+      else {
+        toast.error("something went wrong in the singup process");
+      }
       // setIsLoading(false)
   };
 
 
-  if (isSubmit) {
-    handleSignup();
-  }
+    useEffect(() => {
+      if (isSubmit) {
+        handleSignup();
+      }
+    }, [isSubmit]);
 
   // const validateSecretPhrase = () => {};
 
   const handlePrevStep = () => {
     setStep(step - 1);
   };
-
- 
-
-
 
   const renderForm = () => {
     switch (step) {
@@ -114,6 +109,8 @@ export default function ImportExisting() {
             setIsSubmit={setIsSubmit}
           />
         );
+      
+      
       default:
         return null;
     }
@@ -130,23 +127,11 @@ export default function ImportExisting() {
   //   );
   // }
   return (
-    <div>
-      {isLoading ? (
-        <div className="justify-center items-center">
-          <RotatingLines
-            strokeColor="grey"
-            strokeWidth="5"
-            animationDuration="0.75"
-            width="96"
-            visible={true}
-          />
-        </div>
-      ) : (
-        <div>
-          <Stages currentStep={step} />
-          {renderForm()}
-        </div>
-      )}
+    <div className="bg-[#242526] h-screen md:h-96">
+      <div>
+        <Stages currentStep={step} />
+        {renderForm()}
+      </div>
     </div>
   );
 }

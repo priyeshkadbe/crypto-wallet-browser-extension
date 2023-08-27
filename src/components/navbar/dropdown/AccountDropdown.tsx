@@ -1,5 +1,5 @@
 // AccountDropdown.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import DropDownLayout from "./DropDownLayout";
 import {
   CurrencyRupeeIcon,
@@ -12,11 +12,19 @@ import {
   UserCircleIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/20/solid";
+import { useLogin } from "@/providers/LoginProvider";
 interface AccountProps {
   onClose: () => void;
 }
 
+
+
+
 const AccountContent = () => {
+  const { address } = useLogin();
+
+  useEffect(() => {
+  },[address])
   return (
     <div className="flex flex-col w-full  gap-1">
       <div className="overflow-y-auto flex  flex-col  gap-2">
@@ -24,7 +32,7 @@ const AccountContent = () => {
           <CurrencyDollarIcon className="h-8 w-8" />
           <div className="flex flex-col">
             <h2 className="text-lg font-medium">Account 1</h2>
-            <h2 className="text-lg ">0xerererer</h2>
+            <h2 className="text-xs ">{address?.slice(0,7)}....{ address?.slice(-4)}</h2>
           </div>
         </button>
         {/* <button className="flex justify-start flex-grow items-start gap-2 p-2 border border-gray-600 w-full">

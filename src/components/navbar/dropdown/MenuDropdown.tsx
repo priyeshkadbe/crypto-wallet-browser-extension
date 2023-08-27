@@ -31,7 +31,7 @@ const MenuContent = () => {
   const signOutHandler = () => {
     const signout = signOut();
     if (signout) {
-      navigate("/")
+      navigate("/signup")
     }
   }
 
@@ -39,7 +39,7 @@ const MenuContent = () => {
   const logOutHandler = () => {
     const isLogout = logout();
     if (isLogout) {
-      navigate("/")
+      navigate("/login")
     }
   }
 

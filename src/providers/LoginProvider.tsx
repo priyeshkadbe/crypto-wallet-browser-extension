@@ -1,18 +1,20 @@
 import React, { ReactNode, useContext, useState, useEffect } from "react";
 import bcrypt from "bcryptjs";
 import CryptoJS from "crypto-js";
-import useLocalStorage from "use-local-storage";
+import localforage from "localforage";
+import { ethers } from "ethers";
 
-// Define the LoginContextType
 interface LoginContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
   login: (enteredPassword: string) => boolean;
   logout: () => boolean;
-  isPasswordPresent: () => boolean; // Add this function
+  isPasswordPresent: () => boolean;
   signup: (mnemonics: string, password: string) => boolean;
   isSignup: boolean;
-  signOut:()=> boolean;
+  signOut: () => boolean;
+  localPassword: string | null;
+  address:string|null
 }
 
 const LoginContext = React.createContext<LoginContextType | null>(null);
@@ -21,74 +23,108 @@ interface Props {
   children: ReactNode;
 }
 
-
 export const LoginContextProvider = ({ children }: Props) => {
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [isSignup, setSignup] = useState(false);
   const [localPassword, setLocalPassword] = useState<string | null>(null);
+  const [address, setAddress] = useState<string|null>(null)
+  // const [publicKey, setPublicKey] = useState<string | null>(null);
+  // const [address, setAddress] = useState<string | null>(null);
 
   useEffect(() => {
-    const validate= async()=>{
-      const pass = await localStorage.getItem("password");
-      console.log('useFee')
-    if (pass !== null && pass !== "") {
-      setLocalPassword(pass);
-      setSignup(true);
-    } else {
-      setLocalPassword(null);
-      setSignup(false);
-    }
-    }
-    validate()
-  }, []);
+    const pass = localStorage.getItem("password");
+    console.log("localPass", pass);
+  }, [localPassword]);
 
   const isPasswordPresent = () => {
     return localStorage.getItem("password") !== null;
   };
 
-  const login = (enteredPassword: string): boolean => {
-    console.log("local password", localPassword);
-    console.log("enteredPassword", enteredPassword);
-    if (localPassword === enteredPassword) {
-      setIsLoggedIn(true);
-      return true;
+  const createWallet = (mnemonic: string) => {
+
+    try {
+      
+      const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
+      // return {
+      //   address: wallet.address,
+      //   publicKey: wallet.publicKey,
+      //   privateKey: wallet.privateKey,
+      // };
+      setAddress(wallet.address);
+      return wallet.address;
+    } catch (error) {
+      return error;
     }
-    setIsLoggedIn(false);
-    return false;
   };
 
 
+  // const login = (enteredPassword: string): boolean => {
+  //   // console.log("local password", localPassword);
+  //   console.log("enteredPassword", enteredPassword);
+  //   const getPass = localStorage.getItem("password");
+  //   const mnemonics = localStorage.getItem("mnemonic");
+  //   console.log("getpass", getPass);
+  //   console.log("mne", mnemonics);
+  //   if (getPass === enteredPassword) {
+  //     const wallet = createWallet(mnemonics?.toString());
+  //      console.log("wallet", wallet);
+  //     setIsLoggedIn(true);
+  //     return true;
+  //   }
+  //   return false;
+  // };
+
+
+  const login = (enteredPassword: string): boolean => {
+    const getPass = localStorage.getItem("password");
+
+    if (getPass === null || !comparePassword(getPass, enteredPassword)) {
+      return false;
+    }
+
+    return true;
+  };
 
   const signup = (mnemonics: string, password: string): boolean => {
-    console.log("setting password", password);
-    localStorage.setItem("password", password);
-    
-    const encryptedMnemonic = encryptMnemonic(mnemonics, password);
-    localStorage.setItem("mnemonic", encryptedMnemonic.toString());
-    const isLogin = login(password);
-    if (isLogin) {
+    const pass = hashedPassword(password);
+    localStorage.setItem("password", pass);
+    //setLocalPassword(localStorage.getItem("password"));
+    //console.log("password setted",localStorage.getItem('password'))
+    //const encryptedMnemonic = encryptMnemonic(mnemonics, password);
+    // console.log("encryptMnemonic",)
+
+    // localStorage.setItem("mnemonic", encryptedMnemonic);
+    encryptMnemonic(mnemonics, password).then((val) => {
+      localStorage.setItem("mnemonic", val);
+      console.log("encryptMnemonic", val);
+      console.log("local mnei", localStorage.getItem("mnemonic"));
+    });
+
+    if (login(password)) {
+      const wallet = createWallet(mnemonics.toString());
+      console.log("wallet",wallet)
       return true;
     }
-    return false;
+    //setIsLoggedIn(true)
+    return true;
   };
 
-  const signOut = ():boolean => {
-    const removePassword = localStorage.removeItem("password");
-    const removeMnemonic = localStorage.removeItem("mnemonic");
+  const signOut = (): boolean => {
+    localStorage.removeItem("password");
+    localStorage.removeItem("mnemonic");
+    setLocalPassword(null);
     setSignup(false);
     setIsLoggedIn(false);
     return true;
   };
 
-  // Function to simulate a logout
-  const logout = ():boolean => {
+  const logout = (): boolean => {
     setIsLoggedIn(false);
-    return true
+    return true;
   };
 
-  // Define the value object to be provided to consumers
+
   const value = {
     isLoggedIn,
     setIsLoggedIn,
@@ -98,6 +134,8 @@ export const LoginContextProvider = ({ children }: Props) => {
     signup,
     isSignup,
     signOut,
+    localPassword,
+    address,
   };
 
   return (
@@ -105,7 +143,6 @@ export const LoginContextProvider = ({ children }: Props) => {
   );
 };
 
-// Custom hook to access the LoginContext
 export const useLogin = (): LoginContextType => {
   const context = useContext(LoginContext);
 
@@ -116,7 +153,6 @@ export const useLogin = (): LoginContextType => {
   return context;
 };
 
-// Functions to decrypt the mnemonic and compare the password
 const comparePassword = (enteredPassword: string, hashedPassword?: string) => {
   if (hashedPassword === undefined) {
     return false;
@@ -142,13 +178,5 @@ const encryptMnemonic = async (mnemonic: string, password: string) => {
   const encryptedData = cipher.toString();
   return encryptedData;
 };
-
-function storePassword(password: string) {
-  localStorage.setItem("password", password);
-}
-
-function storeMnemonics(hashedMnemonics: string) {
-  localStorage.setItem("mnemonic", hashedMnemonics);
-}
 
 export default LoginContext;

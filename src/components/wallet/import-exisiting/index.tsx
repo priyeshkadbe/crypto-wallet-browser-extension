@@ -2,15 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { SecretRecoveryPhase } from "./secret-recovery-phrase";
-import {
-  checkAccountExists,
-  decryptMnemonic,
-  encryptMnemonic,
-  encryptPassword,
-  storePassword,
-  storeMnemonics,
-  createWallet,
-} from "@/services/accountServices";
+
 import { Password } from "./password";
 import { mnemonicToSeed } from "ethers/lib/utils";
 import Stages from "./stages";
@@ -24,7 +16,7 @@ export default function ImportExisting() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const {login,signup}=useLogin()
+  const { login, signup, localPassword } = useLogin();
 
   // Define your state to hold form data
   
@@ -34,23 +26,30 @@ export default function ImportExisting() {
   const [secretPhrase, setSecretPhrase] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
 
-   useEffect(() => {
-     if (isSubmit) {
-       handleSubmit();
-     }
-   }, [isSubmit]);
+ 
 
   const handleNextStep = () => {
     setStep(step + 1);
   };
 
-
+  // if (typeof localPassword === 'string') {
+  //    setIsLoading(true);
+  //    const isAuth =  signup(secretPhrase.toString(), password.toString());
+  //    if (isAuth) {
+  //      setIsLoading(false);
+  //      console.log("isAuth", isAuth);
+  //      navigate("/home");
+  //      return;
+  //    }
+  //    toast.error("something went wrong in the validation");
+  //    setIsLoading(false);
+  // }
 
 
   const handleSubmit = async () => {
     setIsLoading(true);
     const isAuth = await signup(secretPhrase.toString(),password.toString());
-    if (isAuth) {
+    if (isAuth ) {
       setIsLoading(false);
       console.log("isAuth",isAuth)
       navigate("/home")
@@ -58,9 +57,13 @@ export default function ImportExisting() {
     }
     toast.error("something went wrong in the validation")
     setIsLoading(false)
-
   }
 
+    useEffect(() => {
+      if (isSubmit) {
+        handleSubmit();
+      }
+    }, [isSubmit, localPassword]);
  
   const handleStageClick = (stepNumber: number) => {
     if (stepNumber < step) {
@@ -88,7 +91,7 @@ export default function ImportExisting() {
 
   return (
     <div>
-      <ToastContainer/>
+      <ToastContainer />
       {isLoading ? (
         <div className="justify-center items-center">
           <RotatingLines
@@ -100,7 +103,7 @@ export default function ImportExisting() {
           />
         </div>
       ) : (
-        <div>
+        <div className="bg-[#242526] h-screen md:h-96">
           <Stages currentStep={step} />
           {renderForm()}
         </div>

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../navbar";
 import Activity from "./Activity";
 import Tokens from "./Tokens";
@@ -17,11 +17,19 @@ import {
   ArrowsRightLeftIcon,
   ArrowPathIcon,
 } from "@heroicons/react/20/solid";
+import { useLogin } from "@/providers/LoginProvider";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { ToastContainer, toast } from "react-toastify";
 
 function HomePage() {
   const [selectedOption, setSelectedOption] = useState<string>("tokens"); // Initialize with "tokens"
 
   const [activeModal, setActiveModal] = useState<string | null>(null); // Track the active modal
+  const [localAddress, setLocalAddress] = useState<string | null>(null);
+  const { address } = useLogin();
+  useEffect(() => {
+    setLocalAddress(address);
+  }, [address]);
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -33,6 +41,7 @@ function HomePage() {
 
   const closeModal = () => {
     setActiveModal(null);
+    address;
   };
 
   const icons: Record<string, React.ReactNode> = {
@@ -60,57 +69,82 @@ function HomePage() {
   };
 
   return (
-    <div className="md:w-[800px]">
-      <Navbar />
-      <div className="flex flex-col my-4 justify-center items-center  ">
-        <div className="flex gap-2 p-2 m-2 bg-gray-500 rounded-full cursor-text">
-          <h1 className="text-gray-100">0x34....5</h1>
-          <ClipboardDocumentIcon className="h-4 w-4" />
-        </div>
-        <div className="m-2 my-4">
-          <h1 className="text-3xl">4 ETH</h1>
-        </div>
-        <div className="flex w-full justify-evenly gap-1">
-          {Object.keys(icons).map((key) => (
-            <button
-              key={key}
-              className="flex flex-col justify-center items-center p-1 gap-1"
-              onClick={() => openModal(key)} // Open modal when the button is clicked
+    <div className="md:w-[800px]  bg-[#242526]  md:border md:border-gray-800 md:shadow-2xl  h-screen md:h-auto">
+      <ToastContainer />
+      <div className="border md:p-2 border-gray-800 shadow-sm md:shadow-lg ">
+        <Navbar />
+      </div>
+      <div className="md:h-96 md:p-4">
+        <div className="flex flex-col my-4 justify-center items-center   ">
+          <div className="flex gap-2 p-2 m-2 bg-gray-500 rounded-full cursor-text">
+            <h1 className="text-gray-100">
+              {localAddress?.slice(0, 7)}....{localAddress?.slice(-4)}
+            </h1>
+            {/* <CopyToClipboard
+              text={localAddress}
+              onCopy={() => {
+                toast.success("Seed phrase copied to clipboard");
+              }}
             >
-              {icons[key]}
-              <p className="text-md">{labels[key]}</p>
-            </button>
-          ))}
+              <button>
+                <ClipboardDocumentIcon className="h-4 w-4" />
+              </button>
+            </CopyToClipboard> */}
+            {localAddress && (
+              <CopyToClipboard
+                text={localAddress}
+                onCopy={() => {
+                  toast.success("Seed phrase copied to clipboard");
+                }}
+              >
+                <button>
+                  <ClipboardDocumentIcon className="h-4 w-4" />
+                </button>
+              </CopyToClipboard>
+            )}
+            {!localAddress && <p>Please import your wallet</p>}
+          </div>
+          <div className="m-2 my-4">
+            <h1 className="text-3xl">4 ETH</h1>
+          </div>
+          <div className="flex   gap-12">
+            {Object.keys(icons).map((key) => (
+              <button
+                key={key}
+                className="flex flex-col justify-center items-center p-1 gap-1"
+                onClick={() => openModal(key)} // Open modal when the button is clicked
+              >
+                {icons[key]}
+                <p className="text-md">{labels[key]}</p>
+              </button>
+            ))}
+          </div>
         </div>
+        <div className="flex justify-evenly  ">
+          <h1
+            className={`cursor-pointer w-[1/2] px-18 p-2  text-lg font-light ${
+              selectedOption === "tokens"
+                ? "text-blue-500 border-b-2 border-blue-500"
+                : ""
+            }`}
+            onClick={() => handleOptionClick("tokens")}
+          >
+            Tokens
+          </h1>
+          <h1
+            className={`cursor-pointer w-[1/2] p-2 px-18 text-lg  font-light ${
+              selectedOption === "activity"
+                ? "text-blue-500 border-b-2  border-blue-500"
+                : ""
+            }`}
+            onClick={() => handleOptionClick("activity")}
+          >
+            Activity
+          </h1>
+        </div>
+        {selectedOption === "tokens" ? <Tokens /> : <Activity />}
+        {renderModal()}
       </div>
-      <div className="flex justify-evenly flex-grow w-full ">
-        <h1
-          className={`cursor-pointer w-[1/2] px-18 p-2  text-lg font-light ${
-            selectedOption === "tokens"
-              ? "text-blue-500 border-b-2 border-blue-500"
-              : ""
-          }`}
-          onClick={() => handleOptionClick("tokens")}
-        >
-          Tokens
-        </h1>
-        <h1
-          className={`cursor-pointer w-[1/2] p-2 px-18 text-lg  font-light ${
-            selectedOption === "activity"
-              ? "text-blue-500 border-b-2  border-blue-500"
-              : ""
-          }`}
-          onClick={() => handleOptionClick("activity")}
-        >
-          Activity
-        </h1>
-      </div>
-      {selectedOption === "tokens" ? (
-        <Tokens /> // Render the TokensComponent when "Tokens" is selected
-      ) : (
-        <Activity /> // Render the ActivityComponent when "Activity" is selected
-      )}
-      {renderModal()}
     </div>
   );
 }

@@ -53,8 +53,8 @@ function Login() {
     );
     }
     return (
-      <div className=" flex flex-col justify-center items-center gap-4 w-full">
-        <ToastContainer/>
+      <div className=" flex bg-[#242526] flex-col justify-center items-center gap-4 w-full">
+        <ToastContainer />
         <div>
           {/* <ArrowDownCircleIcon className="h-6 w-6 text-blue-500" /> */}
           <Logo />
@@ -75,7 +75,7 @@ function Login() {
             />
             <button
               className="bg-[#373583] p-2 rounded-lg  flex-1 self-stretch text-white text-center text-xl"
-              onClick={ handleLogin}
+              onClick={handleLogin}
             >
               unlock
             </button>
