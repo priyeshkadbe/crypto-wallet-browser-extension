@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import CryptoJS from "crypto-js";
 import localforage from "localforage";
 import { ethers } from "ethers";
-
 interface LoginContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
@@ -14,7 +13,7 @@ interface LoginContextType {
   isSignup: boolean;
   signOut: () => boolean;
   localPassword: string | null;
-  address:string|null
+  address: string | null;
 }
 
 const LoginContext = React.createContext<LoginContextType | null>(null);
@@ -28,13 +27,16 @@ export const LoginContextProvider = ({ children }: Props) => {
 
   const [isSignup, setSignup] = useState(false);
   const [localPassword, setLocalPassword] = useState<string | null>(null);
-  const [address, setAddress] = useState<string|null>(null)
+  const [address, setAddress] = useState<string | null>(null);
   // const [publicKey, setPublicKey] = useState<string | null>(null);
   // const [address, setAddress] = useState<string | null>(null);
 
   useEffect(() => {
     const pass = localStorage.getItem("password");
     console.log("localPass", pass);
+    if (pass !== null) {
+      setSignup(true);
+    }
   }, [localPassword]);
 
   const isPasswordPresent = () => {
@@ -42,9 +44,7 @@ export const LoginContextProvider = ({ children }: Props) => {
   };
 
   const createWallet = (mnemonic: string) => {
-
     try {
-      
       const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
       // return {
       //   address: wallet.address,
@@ -57,7 +57,6 @@ export const LoginContextProvider = ({ children }: Props) => {
       return error;
     }
   };
-
 
   // const login = (enteredPassword: string): boolean => {
   //   // console.log("local password", localPassword);
@@ -75,11 +74,16 @@ export const LoginContextProvider = ({ children }: Props) => {
   //   return false;
   // };
 
-
   const login = (enteredPassword: string): boolean => {
     const getPass = localStorage.getItem("password");
 
-    if (getPass === null || !comparePassword(getPass, enteredPassword)) {
+    if (getPass !== null) {
+      console.log("hashed is ", hashedPassword(getPass.toString()));
+    }
+    if (
+      getPass === null ||
+      !comparePassword(getPass, enteredPassword.toString())
+    ) {
       return false;
     }
 
@@ -88,6 +92,7 @@ export const LoginContextProvider = ({ children }: Props) => {
 
   const signup = (mnemonics: string, password: string): boolean => {
     const pass = hashedPassword(password);
+    console.log("pass",pass)
     localStorage.setItem("password", pass);
     //setLocalPassword(localStorage.getItem("password"));
     //console.log("password setted",localStorage.getItem('password'))
@@ -103,7 +108,7 @@ export const LoginContextProvider = ({ children }: Props) => {
 
     if (login(password)) {
       const wallet = createWallet(mnemonics.toString());
-      console.log("wallet",wallet)
+      console.log("wallet", wallet);
       return true;
     }
     //setIsLoggedIn(true)
@@ -123,7 +128,6 @@ export const LoginContextProvider = ({ children }: Props) => {
     setIsLoggedIn(false);
     return true;
   };
-
 
   const value = {
     isLoggedIn,

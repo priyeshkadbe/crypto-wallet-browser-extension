@@ -53,7 +53,7 @@ function Login() {
     );
     }
     return (
-      <div className=" flex bg-[#242526] flex-col justify-center items-center gap-4 w-full">
+      <div className=" flex bg-[#242526] h-screen flex-col justify-center items-center gap-4 w-full">
         <ToastContainer />
         <div>
           {/* <ArrowDownCircleIcon className="h-6 w-6 text-blue-500" /> */}

@@ -3,11 +3,7 @@ import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useHistory from React Router
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  checkAccountExists,
-  encryptMnemonic,
-  storeMnemonics,
-} from "@/services/accountServices";
+
 import * as bip39 from "bip39";
 import { ethers } from "ethers";
 import next from "next";

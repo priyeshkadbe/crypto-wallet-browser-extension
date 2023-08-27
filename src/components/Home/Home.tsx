@@ -71,7 +71,7 @@ function HomePage() {
   return (
     <div className="md:w-[800px]  bg-[#242526]  md:border md:border-gray-800 md:shadow-2xl  h-screen md:h-auto">
       <ToastContainer />
-      <div className="border md:p-2 border-gray-800 shadow-sm md:shadow-lg ">
+      <div className=" md:p-2 border-b border-gray-800 shadow-lg md:shadow-lg ">
         <Navbar />
       </div>
       <div className="md:h-96 md:p-4">

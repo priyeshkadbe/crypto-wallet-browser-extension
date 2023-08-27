@@ -3,7 +3,6 @@ import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {} from "@/services/accountServices";
 
 export default function NewPassword() {
   const navigate = useNavigate();
@@ -28,9 +27,9 @@ export default function NewPassword() {
     <div className="flex flex-col justify-center items-center">
       <ToastContainer />
       <div className="flex flex-start ">
-        <button onClick={() => navigate("/import-existing")}>
+        {/* <button onClick={() => navigate("/import-existing")}>
           <ArrowLeftIcon className="h-6 w-6" />
-        </button>
+        </button> */}
       </div>
       <h1 className="text-3xl font-semibold p-4">Create Password</h1>
       <div className="">

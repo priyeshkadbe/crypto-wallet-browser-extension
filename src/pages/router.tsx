@@ -13,13 +13,10 @@ import AddNewNetwork from "@/components/Networks/AddNewNetwork";
 import { useLogin } from "../providers/LoginProvider"; // Import useLogin from your LoginContextProvider
 import { useEffect } from "react";
 
-
 export default function Router() {
   const { isLoggedIn, isSignup } = useLogin();
 
-  // useEffect(() => {
-
-  // },[isLoggedIn,isSignup])
+  useEffect(() => {}, [isSignup]);
 
   // return (
   //   <div>
@@ -75,8 +72,15 @@ export default function Router() {
             {/* <Route path="/" element={<Login />} /> */}
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Signup />} />
+            if(isSignup)
+            {
+              <>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Login />} />
+                <Route path="*" element={<Navigate to="/login" replace />} />
+              </>
+            }
             <Route path="/signup" element={<Signup />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
             <Route path="/import-existing" element={<ImportExisiting />} />
             <Route path="/create-new" element={<CreateNew />} />
             <Route index path="/home" element={<HomePage />} />
