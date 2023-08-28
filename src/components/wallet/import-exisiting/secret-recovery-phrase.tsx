@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom"; // Import useHistory from React 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import * as bip39 from "bip39"
+import * as bip39 from "bip39";
 import { ethers } from "ethers";
 import next from "next";
 interface SecretRecoveryPhaseProps {
-  setSecretPhrase: (phrase:string)=>void;
+  setSecretPhrase: (phrase: string) => void;
   onNext: () => void;
 }
 
@@ -58,66 +58,31 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
     return inputValues.every((value) => value.trim() !== "");
   };
 
-  // const handleNext =  async() => {
-  //   if (!isAllField()) {
-  //     toast.error("please fill all the fields");
-  //     return false;
-  //   }
-  //   console.log('mnemonic',inputValues.join(" "))
-  //   let isWalletExits = await ethers.utils.isValidMnemonic(
-  //     inputValues.join(" ")
-  //   );
-  //   console.log("isWalletExits", isWalletExits);
-  //   // if (!isWalletExits) {
-  //   //   toast.error("provided mnemonic(seed phrase) is incorrect");
-  //   //   return;
-  //   // }
-    
-  //   // if (!bip39.validateMnemonic(inputValues.join(" "))) {
-  //   //   toast.error("provided mnemonic(seed phrase) is incorrect");
-  //   //   return
-  //   // }
-  //   if (isWalletExits) {
-  //     toast.success("exits");
-  //     secretPhrase = inputValues.join(" ");
-  //     console.log(secretPhrase);
-  //     onNext();
-  //   } else {
-  //     toast.error("provided mnemonic(seed phrase) is incorrect");
-  //   }
-    
-    
-  //   // if (isWalletExits==='true') {
-  //   //   onNext();
-  //   // }
-   
-  // };
-
   const handleNext = async () => {
     try {
       if (!isAllField()) {
         toast.error("please fill all the fields");
-        return ;
+        return;
       }
       console.log(inputValues.join(" "));
-      let isWalletExits = await ethers.utils.isValidMnemonic(inputValues.join(" "));
+      let isWalletExits = await ethers.utils.isValidMnemonic(
+        inputValues.join(" ")
+      );
       if (!isWalletExits) {
-        toast.error("invalid mnemonic")
-        return
+        toast.error("invalid mnemonic");
+        return;
       }
       setSecretPhrase(inputValues.join(" ").toString());
       onNext();
     } catch (error) {
       toast.error("something went wrong");
     }
-  }
+  };
 
   const handleClear = () => {
     const clearedValues = Array(inputValues.length).fill("");
     setInputValues(clearedValues);
   };
-
-  
 
   return (
     <div className="flex flex-col justify-center items-center">

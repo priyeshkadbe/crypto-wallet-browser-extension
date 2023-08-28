@@ -1,8 +1,9 @@
 import React, { ReactNode, useContext, useState, useEffect } from "react";
 import bcrypt from "bcryptjs";
 import CryptoJS from "crypto-js";
-import localforage from "localforage";
 import { ethers } from "ethers";
+import Cookies from "js-cookie";
+
 interface LoginContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
@@ -24,33 +25,38 @@ interface Props {
 
 export const LoginContextProvider = ({ children }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const [isSignup, setSignup] = useState(false);
   const [localPassword, setLocalPassword] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
-  // const [publicKey, setPublicKey] = useState<string | null>(null);
-  // const [address, setAddress] = useState<string | null>(null);
 
   useEffect(() => {
-    const pass = localStorage.getItem("password");
+    const pass = Cookies.get("password"); // Use Cookies.get instead of localStorage.getItem
     console.log("localPass", pass);
-    if (pass !== null) {
+    if (pass !== undefined) {
       setSignup(true);
     }
   }, [localPassword]);
 
   const isPasswordPresent = () => {
-    return localStorage.getItem("password") !== null;
+    return Cookies.get("password") !== undefined; // Use Cookies.get instead of localStorage.getItem
   };
 
   const createWallet = (mnemonic: string) => {
     try {
+      const provider = new ethers.providers.JsonRpcProvider(
+        "https://eth-sepolia.g.alchemy.com/v2/D02WgyXewkbCwfutl0IH3dHy01eZRp_L"
+      );
+
       const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
-      // return {
-      //   address: wallet.address,
-      //   publicKey: wallet.publicKey,
-      //   privateKey: wallet.privateKey,
-      // };
+      if (wallet.address) {
+        const data = {
+          address: wallet.address,
+          publicKey: wallet.publicKey,
+          privateKey: wallet.privateKey,
+          mnemonic: wallet.mnemonic.phrase,
+        };
+        console.log("data is ", data);
+      }
       setAddress(wallet.address);
       return wallet.address;
     } catch (error) {
@@ -58,66 +64,47 @@ export const LoginContextProvider = ({ children }: Props) => {
     }
   };
 
-  // const login = (enteredPassword: string): boolean => {
-  //   // console.log("local password", localPassword);
-  //   console.log("enteredPassword", enteredPassword);
-  //   const getPass = localStorage.getItem("password");
-  //   const mnemonics = localStorage.getItem("mnemonic");
-  //   console.log("getpass", getPass);
-  //   console.log("mne", mnemonics);
-  //   if (getPass === enteredPassword) {
-  //     const wallet = createWallet(mnemonics?.toString());
-  //      console.log("wallet", wallet);
-  //     setIsLoggedIn(true);
-  //     return true;
-  //   }
-  //   return false;
-  // };
-
   const login = (enteredPassword: string): boolean => {
-    const getPass = localStorage.getItem("password");
-
-    if (getPass !== null) {
-      console.log("hashed is ", hashedPassword(getPass.toString()));
+    const hashPassword = hashedPassword(enteredPassword);
+    const storedHashedPassword = Cookies.get("password"); // Use Cookies.get instead of localStorage.getItem
+    console.log("hashPassword:", hashPassword);
+    console.log("storedHashedPassword:", storedHashedPassword);
+    if (storedHashedPassword !== null) {
+      return comparePassword(enteredPassword, hashPassword);
     }
-    if (
-      getPass === null ||
-      !comparePassword(getPass, enteredPassword.toString())
-    ) {
-      return false;
-    }
-
-    return true;
+    return false;
   };
 
   const signup = (mnemonics: string, password: string): boolean => {
-    const pass = hashedPassword(password);
-    console.log("pass",pass)
-    localStorage.setItem("password", pass);
-    //setLocalPassword(localStorage.getItem("password"));
-    //console.log("password setted",localStorage.getItem('password'))
-    //const encryptedMnemonic = encryptMnemonic(mnemonics, password);
-    // console.log("encryptMnemonic",)
+    const hashPass = hashedPassword(password.toString());
+    Cookies.set("password", hashPass, { expires: 365 }); // Use Cookies.set instead of localStorage.setItem
+    const wallet = ethers.Wallet.fromMnemonic(mnemonics);
+    if (wallet.address) {
+      const data = {
+        address: wallet.address,
+        publicKey: wallet.publicKey,
+        privateKey: wallet.privateKey,
+        mnemonics: wallet.mnemonic.phrase,
+      };
+      setAddress(wallet.address);
+      encryptMnemonic(JSON.stringify(data), password).then((val) => {
+        Cookies.set("wallet", val); // Use Cookies.set instead of localStorage.setItem
+        console.log("encryptedWallet", val);
+      });
 
-    // localStorage.setItem("mnemonic", encryptedMnemonic);
-    encryptMnemonic(mnemonics, password).then((val) => {
-      localStorage.setItem("mnemonic", val);
-      console.log("encryptMnemonic", val);
-      console.log("local mnei", localStorage.getItem("mnemonic"));
-    });
-
-    if (login(password)) {
-      const wallet = createWallet(mnemonics.toString());
-      console.log("wallet", wallet);
+      const wall = Cookies.get("wallet"); // Use Cookies.get instead of localStorage.getItem
+      if (wall !== undefined) {
+        console.log("decrypted wallet", decryptMnemonic(wall, password));
+      }
+      console.log("wallet", data);
       return true;
     }
-    //setIsLoggedIn(true)
-    return true;
+    return false;
   };
 
   const signOut = (): boolean => {
-    localStorage.removeItem("password");
-    localStorage.removeItem("mnemonic");
+    Cookies.remove("password"); // Use Cookies.remove instead of localStorage.removeItem
+    Cookies.remove("mnemonic"); // Use Cookies.remove instead of localStorage.removeItem
     setLocalPassword(null);
     setSignup(false);
     setIsLoggedIn(false);
@@ -157,18 +144,16 @@ export const useLogin = (): LoginContextType => {
   return context;
 };
 
-const comparePassword = (enteredPassword: string, hashedPassword?: string) => {
+const comparePassword = (enteredPassword: string, hashedPassword: string) => {
   if (hashedPassword === undefined) {
     return false;
   }
-
   return bcrypt.compareSync(enteredPassword, hashedPassword);
 };
 
 const hashedPassword = (password: string) => {
   const salt = bcrypt.genSaltSync(10);
-  const hashedPassword = bcrypt.hashSync(password, salt);
-  return hashedPassword;
+  return bcrypt.hashSync(password, salt);
 };
 
 const decryptMnemonic = (encryptedMnemonic: string, password: string) => {

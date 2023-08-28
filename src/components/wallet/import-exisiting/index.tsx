@@ -22,7 +22,7 @@ export default function ImportExisting() {
   
  
   
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState<string|null>(null);
   const [secretPhrase, setSecretPhrase] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
 
@@ -47,16 +47,21 @@ export default function ImportExisting() {
 
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    const isAuth = await signup(secretPhrase.toString(),password.toString());
-    if (isAuth ) {
+    if (password !== null) {
+      setIsLoading(true);
+      const isAuth = await signup(secretPhrase, password);
+      if (isAuth) {
+        setIsLoading(false);
+        console.log("isAuth", isAuth);
+        navigate("/home");
+        return;
+      }
+      toast.error("something went wrong in the validation");
       setIsLoading(false);
-      console.log("isAuth",isAuth)
-      navigate("/home")
       return
     }
-    toast.error("something went wrong in the validation")
-    setIsLoading(false)
+    toast.error("something is wrong")
+    
   }
 
     useEffect(() => {

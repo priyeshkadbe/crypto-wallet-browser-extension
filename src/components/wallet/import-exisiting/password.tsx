@@ -4,22 +4,22 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ChangeEvent } from "react";
+import ForgotPassword from "@/components/Auth/ForgotPassword";
 
 interface PasswordProps {
   setPassword: (pass: string) => void;
   setIsSubmit: (sub: boolean) => void;
 }
 
-
-
-export const Password: React.FC<PasswordProps> = ({ setPassword, setIsSubmit }) => {
+export const Password: React.FC<PasswordProps> = ({
+  setPassword,
+  setIsSubmit,
+}) => {
   const navigate = useNavigate();
 
-  const [pass, setPass] = useState("");
-  const [confirmPass, setConfirmPass] = useState("");
+  const [pass, setPass] = useState<string|null>(null);
+  const [confirmPass, setConfirmPass] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  
 
   const onSubmit = () => {
     if (isSubmitting) return;
@@ -27,14 +27,18 @@ export const Password: React.FC<PasswordProps> = ({ setPassword, setIsSubmit }) 
       toast.error("The passwords do not match");
       return;
     }
-    if (pass.length < 6) {
-      toast.error("The password must be greater than 5 characters");
-      return;
+    // if (pass.length < 6) {
+    //   toast.error("The password must be greater than 5 characters");
+    //   return;
+    // }
+    if (pass !== null) {
+       setIsSubmitting(true);
+       setPassword(pass);
+       console.log(pass);
+      setIsSubmit(true);
+      return
     }
-    setIsSubmitting(true); 
-    setPassword(pass.toString());
-    console.log(pass);
-    setIsSubmit(true);
+   return
   };
 
   return (
