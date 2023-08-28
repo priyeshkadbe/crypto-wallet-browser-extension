@@ -61,7 +61,7 @@ function Navbar() {
 
   return (
     <div>
-      <div className="bg-[#242526]   flex justify-between items-center px-4 relative py-3 ">
+      <div className="bg-[#0d0d0d]   flex justify-between items-center px-4 relative py-3 ">
         <div className="flex w-full justify-between gap-1">
           {Object.keys(icons).map((key) => (
             <DropdownButton

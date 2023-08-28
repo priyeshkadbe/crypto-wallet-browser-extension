@@ -12,10 +12,10 @@ function Signup() {
 
 
   return (
-    <div className="flex bg-[#242526] flex-col justify-center items-center gap-4 h-screen md:h-96 ">
+    <div className="flex bg-[#0d0d0d] flex-col justify-center items-center gap-4 h-screen  md:h-[768px] md:w-[768px] md:rounded-lg">
       <Logo />
       <div className="">
-        <h1 className="text-3xl text-[#373583] my-2 px-4 whitespace-nowrap">
+        <h1 className="text-3xl md:text-5xl text-blue-400 my-2 px-4 whitespace-nowrap">
           {" "}
           Welcome to Crypto Wallet
         </h1>

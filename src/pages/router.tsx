@@ -70,7 +70,7 @@ export default function Router() {
         <div>
           <Routes>
             {/* <Route path="/" element={<Login />} /> */}
-            <Route path="/login" element={<Login />} />
+            {/* <Route path="/login" element={<Login />} /> */}
             <Route path="/" element={<Signup />} />
             if(isSignup)
             {
@@ -80,16 +80,22 @@ export default function Router() {
                 <Route path="*" element={<Navigate to="/login" replace />} />
               </>
             }
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/import-existing" element={<ImportExisiting />} />
-            <Route path="/create-new" element={<CreateNew />} />
-            <Route index path="/home" element={<HomePage />} />
-            <Route
-              index
-              path="/home"
-              element={<Navigate to="/login" replace />}
-            />
+            if(isSignup && isLoggedIn)
+            {
+              <>
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/import-existing" element={<ImportExisiting />} />
+                <Route path="/create-new" element={<CreateNew />} />
+                <Route index path="/home" element={<HomePage />} />
+                <Route
+                  index
+                  path="/home"
+                  element={<Navigate to="/login" replace />}
+                />
+              </>
+            }
             {/* Add more routes as needed */}
+            <Route path="*" element={<Navigate to="/Signup" replace />} />
           </Routes>
         </div>
       </HashRouter>

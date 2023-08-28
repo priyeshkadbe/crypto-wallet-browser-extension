@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { SecretRecoveryPhase } from "./security-phrase";
-import {useLogin} from "@/providers/LoginProvider"
+import { useLogin } from "@/providers/LoginProvider";
 import { Password } from "./password";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -10,13 +10,12 @@ import Stages from "./stages";
 import { ConfirmSecretRecoveryPhase } from "./confirm-security-phrase";
 import { toast } from "react-toastify";
 
-
 export default function ImportExisting() {
   const [step, setStep] = useState(1);
-   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [secretPhrase, setSecretPhrase] = useState("");
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
 
   const { signup, isLoggedIn, localPassword } = useLogin();
@@ -31,7 +30,6 @@ export default function ImportExisting() {
   // });
 
   // useEffect(() => {}, [isLoggedIn, localPassword]);
-
 
   const handleNextStep = () => {
     setStep(step + 1);
@@ -52,32 +50,28 @@ export default function ImportExisting() {
   //   }
   // };
 
-  
-
   const handleSignup = async () => {
     console.log("running2");
     setIsLoading(true);
-    console.log("data sending",secretPhrase.toString(), password.toString());
-      const isSignIn = await signup(secretPhrase.toString(),password.toString());
-      console.log("isSignIn", isSignIn);
-      if (isSignIn) {
-        toast.success("logging")
-        console.log("yes")
-        navigate("/home")
-        setIsLoading(false)
-      }
-      else {
-        toast.error("something went wrong in the singup process");
-      }
-      // setIsLoading(false)
+    console.log("data sending", secretPhrase.toString(), password.toString());
+    const isSignIn = await signup(secretPhrase.toString(), password.toString());
+    console.log("isSignIn", isSignIn);
+    if (isSignIn) {
+      toast.success("logging");
+      console.log("yes");
+      navigate("/home");
+      setIsLoading(false);
+    } else {
+      toast.error("something went wrong in the singup process");
+    }
+    // setIsLoading(false)
   };
 
-
-    useEffect(() => {
-      if (isSubmit) {
-        handleSignup();
-      }
-    }, [isSubmit]);
+  useEffect(() => {
+    if (isSubmit) {
+      handleSignup();
+    }
+  }, [isSubmit]);
 
   // const validateSecretPhrase = () => {};
 
@@ -96,12 +90,7 @@ export default function ImportExisting() {
         );
 
       case 2:
-        return (
-          <Password
-            setPassword={setPassword}
-            onNext={handleNextStep}
-          />
-        );
+        return <Password setPassword={setPassword} onNext={handleNextStep} />;
       case 3:
         return (
           <ConfirmSecretRecoveryPhase
@@ -109,8 +98,7 @@ export default function ImportExisting() {
             setIsSubmit={setIsSubmit}
           />
         );
-      
-      
+
       default:
         return null;
     }
@@ -127,7 +115,7 @@ export default function ImportExisting() {
   //   );
   // }
   return (
-    <div className="bg-[#242526] h-screen md:h-96">
+    <div className="bg-[#0d0d0d] h-[768px] w-[768px] md:flex md:justify-center md:items-center md:rounded-xl ">
       <div>
         <Stages currentStep={step} />
         {renderForm()}

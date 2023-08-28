@@ -26,10 +26,12 @@ function HomePage() {
 
   const [activeModal, setActiveModal] = useState<string | null>(null); // Track the active modal
   const [localAddress, setLocalAddress] = useState<string | null>(null);
-  const { address } = useLogin();
+  const { wallet } = useLogin();
   useEffect(() => {
-    setLocalAddress(address);
-  }, [address]);
+    if (wallet!==null) {
+      setLocalAddress(wallet.address);
+    }
+  }, [wallet]);
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -41,7 +43,7 @@ function HomePage() {
 
   const closeModal = () => {
     setActiveModal(null);
-    address;
+    wallet?.address;
   };
 
   const icons: Record<string, React.ReactNode> = {
@@ -69,15 +71,15 @@ function HomePage() {
   };
 
   return (
-    <div className="md:w-[800px]  bg-[#242526]  md:border md:border-gray-800 md:shadow-2xl  h-screen md:h-auto">
+    <div className="  bg-[#0d0d0d]  md:shadow-2xl  h-screen  md:h-[768px] md:w-[768px] md:rounded-xl">
       <ToastContainer />
       <div className=" md:p-2 border-b border-gray-800 shadow-lg md:shadow-lg ">
         <Navbar />
       </div>
       <div className="md:h-96 md:p-4">
         <div className="flex flex-col my-4 justify-center items-center   ">
-          <div className="flex gap-2 p-2 m-2 bg-gray-500 rounded-full cursor-text">
-            <h1 className="text-gray-100">
+          <div className="flex gap-2 py-2 px-4 m-2 bg-gray-700  rounded-full cursor-text">
+            <h1 className="text-[#b3b3b3] text-xl">
               {localAddress?.slice(0, 7)}....{localAddress?.slice(-4)}
             </h1>
             {/* <CopyToClipboard
@@ -105,7 +107,7 @@ function HomePage() {
             {!localAddress && <p>Please import your wallet</p>}
           </div>
           <div className="m-2 my-4">
-            <h1 className="text-3xl">4 ETH</h1>
+            <h1 className="text-3xl text-white">4 ETH</h1>
           </div>
           <div className="flex   gap-12">
             {Object.keys(icons).map((key) => (

@@ -7,16 +7,12 @@ interface Stage {
   text: string;
 }
 
-
 interface StagesProps {
   currentStep: number;
-   // Add a callback for stage click
+  // Add a callback for stage click
 }
 
-export default function Stages({
-  currentStep,
-  
-}: StagesProps) {
+export default function Stages({ currentStep }: StagesProps) {
   const stages: Stage[] = [
     { number: 1, text: "Enter SecretRecoveryPhrase" },
     { number: 2, text: "Password" },

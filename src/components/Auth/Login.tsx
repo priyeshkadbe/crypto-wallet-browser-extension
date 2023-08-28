@@ -54,14 +54,14 @@ function Login() {
     );
     }
     return (
-      <div className=" flex bg-[#242526] h-screen flex-col justify-center items-center gap-4 w-full">
+      <div className=" flex bg-[#0d0d0d]  md:border-2 md:border-white  md:rounded-2xl flex-col justify-center items-center gap-4 md:h-[768px] md:w-[768px]">
         <ToastContainer />
         <div>
           {/* <ArrowDownCircleIcon className="h-6 w-6 text-blue-500" /> */}
           <Logo />
         </div>
         <div className="flex flex-col justify-center items-center gap-1">
-          <h1 className="text-5xl text-[#373583] whitespace-nowrap">
+          <h1 className="text-5xl text-[#2f80ed] whitespace-nowrap">
             {" "}
             Welcome Back
           </h1>
@@ -72,17 +72,16 @@ function Login() {
               className="outline-none bg-transparent py-2 px-4 placeholder:text-xl border-b-2 border-[#373583]"
               placeholder="password"
               onChange={(e) => setInputValue(e.target.value)}
-              
             />
             <button
-              className="bg-[#373583] p-2 rounded-lg  flex-1 self-stretch text-white text-center text-xl"
+              className="bg-[#2f80ed] p-2 rounded-lg  flex-1 self-stretch text-white text-center text-xl"
               onClick={handleLogin}
             >
               unlock
             </button>
             <button
               onClick={() => navigate("/enter-recovery-phrase")}
-              className="text-[#373583] text-xl my-2"
+              className="text-[#2f80ed] text-xl my-2"
             >
               forgot password ?
             </button>

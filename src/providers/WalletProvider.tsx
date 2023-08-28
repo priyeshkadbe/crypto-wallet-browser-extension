@@ -1,13 +1,23 @@
 import { ethers } from "ethers";
 import React, { ReactNode, useContext, useEffect, useState } from "react";
 
+interface SetAccountsFunction {
+  (
+    accounts: Array<{
+      account: string;
+      public_key: string;
+      private_key: string;
+    }>
+  ): void;
+}
+
 interface WalletContextType {
-  mnemonic: string;
   accounts: Array<{
     account: string;
     public_key: string;
     private_key: string;
   }>;
+  setAccounts: SetAccountsFunction;
 }
 
 const WalletContext = React.createContext<WalletContextType | null>(null);
@@ -17,9 +27,16 @@ interface Props {
 }
 
 export const WalletProvider = ({ children }: Props) => {
-  const [mnemonic, setMnemonic] = useState("");
-  const [accounts, setAccounts] = useState([]);
-
+  const [accounts, setAccounts] = useState<
+    Array<{
+      account: string;
+      public_key: string;
+      private_key: string;
+    }>
+    >([]);
+  
+  const [network,setNetwork]=useState<Number|null>(null)
+  
   // const fetchWallet = () => {
   //   try {
   //     const { address } = ethers.Wallet.fromMnemonic(mnemonic)
@@ -30,8 +47,6 @@ export const WalletProvider = ({ children }: Props) => {
   // }
 
   const value = {
-    mnemonic,
-    setMnemonic,
     accounts,
     setAccounts,
   };

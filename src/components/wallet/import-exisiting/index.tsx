@@ -108,7 +108,7 @@ export default function ImportExisting() {
           />
         </div>
       ) : (
-        <div className="bg-[#242526] h-screen md:h-96">
+        <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
           <Stages currentStep={step} />
           {renderForm()}
         </div>
