@@ -97,7 +97,7 @@ export default function ImportExisting() {
   return (
     <div>
       <ToastContainer />
-      {isLoading ? (
+      {/* {isLoading ? (
         <div className="justify-center items-center">
           <RotatingLines
             strokeColor="grey"
@@ -108,11 +108,12 @@ export default function ImportExisting() {
           />
         </div>
       ) : (
-        <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
-          <Stages currentStep={step} />
-          {renderForm()}
-        </div>
-      )}
+        
+      )} */}
+      <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
+        <Stages currentStep={step} />
+        {renderForm()}
+      </div>
     </div>
   );
 }

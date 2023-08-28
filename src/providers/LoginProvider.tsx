@@ -72,8 +72,8 @@ export const LoginContextProvider = ({ children }: Props) => {
 
       const locWallet = new ethers.Wallet(wallet.privateKey, provider)
       console.log("locWallet", locWallet);
-      provider.getBalance(wallet.address).then((bal) => {
-        console.log("balance is :", ethers.utils.formatEther(bal))
+      provider.getNetwork().then((bal) => {
+        console.log("balance is :", bal.name)
       })
       return wallet.address;
     } catch (error) {
@@ -208,6 +208,8 @@ export const useLogin = (): LoginContextType => {
   return context;
 };
 
+
+
 const comparePassword = (enteredPassword: string, hashedPassword: string) => {
   if (hashedPassword === undefined) {
     return false;
@@ -221,13 +223,13 @@ const hashedPassword = (password: string) => {
 };
 
 const decryptMnemonic = (encryptedMnemonic: string, password: string) => {
-  return CryptoJS.AES.decrypt(encryptedMnemonic, password).toString(
+  return CryptoJS.AES.decrypt(encryptedMnemonic.toString(), password).toString(
     CryptoJS.enc.Utf8
   );
 };
 
 const encryptMnemonic = async (mnemonic: string, password: string) => {
-  const cipher = CryptoJS.AES.encrypt(mnemonic, password);
+  const cipher = CryptoJS.AES.encrypt(JSON.stringify(mnemonic), password);
   const encryptedData = cipher.toString();
   return encryptedData;
 };

@@ -2,6 +2,7 @@
   "name": "next-router",
   "version": "0.1.0",
   "private": true,
+  
   "scripts": {
     "dev": "npm-watch",
     "local": "next dev",

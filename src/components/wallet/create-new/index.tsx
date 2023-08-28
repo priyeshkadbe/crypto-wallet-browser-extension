@@ -115,7 +115,7 @@ export default function ImportExisting() {
   //   );
   // }
   return (
-    <div className="bg-[#0d0d0d] h-[768px] w-[768px] md:flex md:justify-center md:items-center md:rounded-xl ">
+    <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
       <div>
         <Stages currentStep={step} />
         {renderForm()}

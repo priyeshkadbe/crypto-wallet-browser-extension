@@ -20,18 +20,21 @@ import {
 import { useLogin } from "@/providers/LoginProvider";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { ToastContainer, toast } from "react-toastify";
+import {useWalletState} from "@/providers/WalletProvider"
 
 function HomePage() {
   const [selectedOption, setSelectedOption] = useState<string>("tokens"); // Initialize with "tokens"
 
   const [activeModal, setActiveModal] = useState<string | null>(null); // Track the active modal
   const [localAddress, setLocalAddress] = useState<string | null>(null);
-  const { wallet } = useLogin();
+
+  const {balance,network,account} = useWalletState();
+
   useEffect(() => {
-    if (wallet!==null) {
-      setLocalAddress(wallet.address);
-    }
-  }, [wallet]);
+    // if (wallet!==null) {
+    //   setLocalAddress(wallet.address);
+    // }
+  }, [account,balance]);
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -43,7 +46,7 @@ function HomePage() {
 
   const closeModal = () => {
     setActiveModal(null);
-    wallet?.address;
+    
   };
 
   const icons: Record<string, React.ReactNode> = {
@@ -80,7 +83,7 @@ function HomePage() {
         <div className="flex flex-col my-4 justify-center items-center   ">
           <div className="flex gap-2 py-2 px-4 m-2 bg-gray-700  rounded-full cursor-text">
             <h1 className="text-[#b3b3b3] text-xl">
-              {localAddress?.slice(0, 7)}....{localAddress?.slice(-4)}
+              {account?.slice(0, 7)}....{account?.slice(-4)}
             </h1>
             {/* <CopyToClipboard
               text={localAddress}
@@ -107,7 +110,7 @@ function HomePage() {
             {!localAddress && <p>Please import your wallet</p>}
           </div>
           <div className="m-2 my-4">
-            <h1 className="text-3xl text-white">4 ETH</h1>
+            <h1 className="text-3xl text-white">{ balance}</h1>
           </div>
           <div className="flex   gap-12">
             {Object.keys(icons).map((key) => (

@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import React, { ReactNode, useContext, useEffect, useState } from "react";
-
+import { useLogin } from "./LoginProvider";
+import { SEPOLIA_PROVIDER } from "@/utils/providers";
 interface SetAccountsFunction {
   (
     accounts: Array<{
@@ -17,7 +18,9 @@ interface WalletContextType {
     public_key: string;
     private_key: string;
   }>;
-  setAccounts: SetAccountsFunction;
+  balance: string | null;
+  network: String | null;
+  account: String | null;
 }
 
 const WalletContext = React.createContext<WalletContextType | null>(null);
@@ -33,22 +36,46 @@ export const WalletProvider = ({ children }: Props) => {
       public_key: string;
       private_key: string;
     }>
-    >([]);
-  
-  const [network,setNetwork]=useState<Number|null>(null)
-  
-  // const fetchWallet = () => {
-  //   try {
-  //     const { address } = ethers.Wallet.fromMnemonic(mnemonic)
-  //     return address
-  //   } catch (error) {
-  //     return "something went wrong"
-  //   }
-  // }
+  >([]);
+
+  const [account,setAccount]=useState<string|null>(null)
+  const [network, setNetwork] = useState<String | null>(null);
+  const [balance, setBalance] = useState<string | null>(null); // Change String to string
+
+  const { wallet } = useLogin();
+
+  useEffect(() => {
+    if (wallet !== null) {
+      createWallet(wallet.mnemonic)
+    }
+  },[wallet])
+
+  const createWallet = (mnemonic: string) => {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider(
+        process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER
+      );
+      console.log("pro", process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER);
+      const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
+      const locWallet = new ethers.Wallet(wallet.privateKey, provider);
+      console.log("locWallet", locWallet);
+      provider.getNetwork().then((val) => {
+        setNetwork(val.name)
+      });
+      provider.getBalance(wallet.address).then((val) => {
+        setBalance(ethers.utils.formatEther(val).toString())
+      })
+      return wallet.address;
+    } catch (error) {
+      return error;
+    }
+  };
 
   const value = {
     accounts,
-    setAccounts,
+    balance,
+    network,
+    account
   };
 
   return (
