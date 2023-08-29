@@ -3,8 +3,8 @@ export const Ethereum = () => {
     <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="1535"
-        height="2500"
+        width="32px"
+        height="32px"
         preserveAspectRatio="xMidYMid"
         viewBox="0 0 256 417"
         id="ethereum"

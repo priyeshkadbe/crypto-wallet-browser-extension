@@ -57,7 +57,7 @@ const AccountDropdown: React.FC<AccountProps> = ({ onClose }) => {
  
       
       <DropDownLayout
-        title="Account"
+        title="Select Account"
         content={<AccountContent />}
         onClose={onClose}
         icon={<UserCircleIcon className="h-6 w-6" />}

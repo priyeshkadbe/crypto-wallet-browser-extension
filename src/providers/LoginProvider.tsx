@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
 import Cookies from "js-cookie";
-
+import { getProvider } from "@/utils/providers";
 
 interface LoginContextType {
   isLoggedIn: boolean;
@@ -16,6 +16,12 @@ interface LoginContextType {
   signOut: () => boolean;
   localPassword: string | null;
   wallet: Wallet | null;
+  balance: string | null;
+  account: string | null;
+  network: string | null;
+  setNetwork: (value: string | null) => void;
+  chainId: number | null;
+  setChainId: (val: number | null) => void;
 }
 
 const LoginContext = React.createContext<LoginContextType | null>(null);
@@ -35,9 +41,11 @@ export const LoginContextProvider = ({ children }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSignup, setSignup] = useState(false);
   const [localPassword, setLocalPassword] = useState<string | null>(null);
-  // const [address, setAddress] = useState<string | null>(null);
+  const [account, setAccount] = useState<string | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
-
+  const [balance, setBalance] = useState<string | null>(null);
+  const [network, setNetwork] = useState<string | null>(null);
+  const [chainId, setChainId] = useState<number | null>(1);
 
   useEffect(() => {
     const pass = Cookies.get("password"); // Use Cookies.get instead of localStorage.getItem
@@ -45,7 +53,7 @@ export const LoginContextProvider = ({ children }: Props) => {
     if (pass !== undefined) {
       setSignup(true);
     }
-  }, [localPassword]);
+  }, [localPassword, chainId]);
 
   const isPasswordPresent = () => {
     return Cookies.get("password") !== undefined; // Use Cookies.get instead of localStorage.getItem
@@ -53,11 +61,8 @@ export const LoginContextProvider = ({ children }: Props) => {
 
   const createWallet = (mnemonic: string) => {
     try {
-      const provider = new ethers.providers.JsonRpcProvider(
-        "https://eth-sepolia.g.alchemy.com/v2/D02WgyXewkbCwfutl0IH3dHy01eZRp_L"
-      );
+      const provider = getProvider(chainId!);
 
-      
       const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
       if (wallet.address) {
         const data = {
@@ -70,11 +75,21 @@ export const LoginContextProvider = ({ children }: Props) => {
         console.log("data is ", data);
       }
 
-      const locWallet = new ethers.Wallet(wallet.privateKey, provider)
+      const locWallet = new ethers.Wallet(wallet.privateKey, provider);
+
+      provider.getNetwork().then((val) => {
+        setNetwork(val.name);
+
+        console.log("logoUrl:", val);
+      });
+      provider.getBalance(wallet.address).then((val) => {
+        setBalance(ethers.utils.formatEther(val).toString());
+      });
+
       console.log("locWallet", locWallet);
       provider.getNetwork().then((bal) => {
-        console.log("balance is :", bal.name)
-      })
+        console.log("balance is :", bal.name);
+      });
       return wallet.address;
     } catch (error) {
       return error;
@@ -88,10 +103,6 @@ export const LoginContextProvider = ({ children }: Props) => {
     const encryptMnemonic = Cookies.get("mnemonic");
     console.log("hashPassword:", hashPassword);
     console.log("storedHashedPassword:", storedHashedPassword);
-    
-    // if (storedHashedPassword !== null) {
-    //   return comparePassword(enteredPassword, hashPassword);
-    // }
     const isPasswordValid = comparePassword(enteredPassword, hashPassword);
 
     if (
@@ -191,6 +202,12 @@ export const LoginContextProvider = ({ children }: Props) => {
     signOut,
     localPassword,
     wallet,
+    balance,
+    account,
+    network,
+    setNetwork,
+    chainId,
+    setChainId,
   };
 
   return (
@@ -207,8 +224,6 @@ export const useLogin = (): LoginContextType => {
 
   return context;
 };
-
-
 
 const comparePassword = (enteredPassword: string, hashedPassword: string) => {
   if (hashedPassword === undefined) {

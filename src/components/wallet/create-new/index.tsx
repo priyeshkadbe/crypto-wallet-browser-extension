@@ -105,21 +105,33 @@ export default function ImportExisting() {
   };
   // if (isLoading) {
   //   return (
-  //     <RotatingLines
-  //       strokeColor="grey"
-  //       strokeWidth="5"
-  //       animationDuration="0.75"
-  //       width="96"
-  //       visible={true}
-  //     />
+  //     <div className="flex items-center justify-center">
+  //       <RotatingLines
+  //         strokeColor="white"
+  //         strokeWidth="5"
+  //         animationDuration="0.75"
+  //         width="96"
+  //         visible={true}
+  //       />
+  //     </div>
   //   );
   // }
   return (
     <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
-      <div>
-        <Stages currentStep={step} />
-        {renderForm()}
-      </div>
+      {isLoading ? (
+        <RotatingLines
+          strokeColor="white"
+          strokeWidth="5"
+          animationDuration="0.75"
+          width="96"
+          visible={true}
+        />
+      ) : (
+        <>
+          <Stages currentStep={step} />
+          {renderForm()}
+        </>
+      )}
     </div>
   );
 }

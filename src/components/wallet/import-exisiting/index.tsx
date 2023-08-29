@@ -47,6 +47,7 @@ export default function ImportExisting() {
 
 
   const handleSubmit = async () => {
+    
     if (password !== null) {
       setIsLoading(true);
       const isAuth = await signup(secretPhrase, password);
@@ -110,9 +111,25 @@ export default function ImportExisting() {
       ) : (
         
       )} */}
-      <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
+      {/* <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
         <Stages currentStep={step} />
         {renderForm()}
+      </div> */}
+      <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center md:items-center md:h-[768px] md:w-[768px] md:rounded-lg">
+        {isLoading ? (
+          <RotatingLines
+            strokeColor="white"
+            strokeWidth="5"
+            animationDuration="0.75"
+            width="96"
+            visible={true}
+          />
+        ) : (
+          <>
+            <Stages currentStep={step} />
+            {renderForm()}
+          </>
+        )}
       </div>
     </div>
   );

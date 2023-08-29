@@ -1,27 +1,59 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-export const SEPOLIA_PROVIDER = {
-  provider:process.env.SEPOLIA_PROVIDER,
-  chainId: 11155111,
-};
+import { ethers } from "ethers";
 
-export const GOERLI_PROVIDER = {
-  provider: process.env.GOERLI_PROVIDER,
-  chainId: 5,
-};
+export function getProvider(chainId: number) {
+  switch (chainId) {
+    case 1:
+      return new ethers.providers.JsonRpcProvider(
+        process.env.NEXT_PUBLIC_ETHEREUM_PROVIDER
+      );
+    case 5:
+      return new ethers.providers.JsonRpcProvider(
+        process.env.NEXT_PUBLIC_GOERLI_PROVIDER
+      );
+    case 137:
+      return new ethers.providers.JsonRpcProvider(
+        process.env.NEXT_PUBLIC_POLYGON_MAINNET_PROVIDER
+      );
+    case 80001:
+      return new ethers.providers.JsonRpcProvider(
+        process.env.NEXT_PUBLIC_MUMBAI_TESTNET_PROVIDER
+      );
+    case 11155111:
+      return new ethers.providers.JsonRpcProvider(
+        process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER
+      );
+    default:
+      return new ethers.providers.JsonRpcProvider(
+        process.env.NEXT_PUBLIC_DEFAULT_PROVIDER
+      );
+  }
+}
 
-export const ETHEREUM_MAINNET_PROVIDER = {
-  provider: process.env.ETHEREUM_MAINNET_PROVIDER,
-  chainId: 1,
-};
+// export const PROVIDERS = [
+//   {
+//     provider: process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER,
+//     chainId: 11155111,
+//   },
+//   {
+//     provider: process.env.NEXT_PUBLIC_GOERLI_PROVIDER,
+//     chainId: 5,
+//   },
 
-export const POLYGON_MAINNET_PROVIDER = {
-  provider: process.env.POLYGON_MAINNET_PROVIDER,
-  chainId: 137,
-};
+//   {
+//     provider: process.env.NEXT_PUBLIC_ETHEREUM_MAINNET_PROVIDER,
+//     chainId: 1,
+//   },
 
-export const MUMBAI_TESTNET_PROVIDER = {
-  provider: process.env.MUMBAI_TESTNET_PROVIDER,
-  chainId: 80001,
-};
+//   {
+//     provider: process.env.NEXT_PUBLIC_POLYGON_MAINNET_PROVIDER,
+//     chainId: 137,
+//   },
+
+//   {
+//     provider: process.env.NEXT_PUBLIC_MUMBAI_TESTNET_PROVIDER,
+//     chainId: 80001,
+//   },
+// ];

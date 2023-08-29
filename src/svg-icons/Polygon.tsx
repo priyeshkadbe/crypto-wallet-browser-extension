@@ -3,8 +3,8 @@ export const Polygon = () => {
     <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="1024"
-        height="1024"
+        width="32px"
+        height="32px"
         fill="none"
         viewBox="0 0 1024 1024"
         id="polygon-token"
