@@ -86,10 +86,10 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
         Enter The Secret Recovery Phrase
       </h1>
 
-      <div className="grid grid-cols-3 gap-4 m-2">
+      <div className="grid grid-cols-3 gap-4 md:gap-8 m-2">
         {inputValues.map((value, index) => (
-          <div key={index} className="flex items-center space-x-2">
-            <span>{index + 1}.</span>
+          <div key={index} className="flex items-center justify-center space-x-2">
+            <span className="text-gray-200">{index + 1}.</span>
             <input
               type={showPasswords[index] ? "text" : "password"}
               value={value}
@@ -99,7 +99,7 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
                 setInputValues(newInputValues);
               }}
               onPaste={(e) => handlePaste(e, index)}
-              className="border border-gray-300 p-2 rounded-lg w-full px-2"
+              className="border border-gray-300 p-2 rounded-lg w-full md:w-1/2 px-2"
             />
             <button
               onClick={() => togglePasswordVisibility(index)}

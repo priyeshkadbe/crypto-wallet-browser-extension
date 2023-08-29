@@ -11,9 +11,10 @@ import NetworkDropdown from "./dropdown/NetworkDropdown";
 import AccountDropdown from "./dropdown/AccountDropdown";
 import MenuDropdown from "./dropdown/MenuDropdown";
 import DropdownButton from "./dropdown/DropdownButton"; // Import the DropdownButton component
-import { Ethereum } from "@/svg-icons/Ethereum"
-import {Polygon} from "@/svg-icons/Polygon"
+import { Ethereum } from "@/svg-icons/Ethereum";
+import { Polygon } from "@/svg-icons/Polygon";
 import { useLogin } from "@/providers/LoginProvider";
+import networks_const from "@/utils/networks";
 
 interface ModalInfo {
   title: string;
@@ -24,11 +25,9 @@ interface ModalInfo {
 function Navbar() {
   const [selectedOption, setSelectedOption] = useState<string>("tokens");
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const {chainId} = useLogin()
+  const { chainId } = useLogin();
 
-  useEffect(() => {
-    
-  },[chainId])
+  useEffect(() => {}, [chainId]);
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -41,8 +40,6 @@ function Navbar() {
   const closeModal = () => {
     setActiveModal(null);
   };
-
-  
 
   const renderModal = () => {
     if (!activeModal) return null;
@@ -61,14 +58,22 @@ function Navbar() {
 
   const icons: Record<string, React.ReactNode> = {
     network: (
-      <>
-        <h2 className="hidden md:flex ">Networks</h2>
-        {chainId === 1 || chainId === 11155111 || chainId === 5 ? (
-          <Ethereum />
-        ) : (
-          <Polygon />
-        )}
-      </>
+      <div className="flex justify-center items-center gap-x-4">
+        <h2 className="hidden md:flex ">
+          {
+            networks_const.find((network) => network.chainId === chainId)
+              ?.network
+          }
+        </h2>
+        <div className="md:hidden">
+          {chainId === 1 || chainId === 11155111 || chainId === 5 ? (
+            <Ethereum />
+          ) : (
+            <Polygon />
+          )}
+        </div>
+        <ChevronDownIcon className="h-8 w-8  " />
+      </div>
     ),
     accounts: (
       <>
@@ -89,7 +94,6 @@ function Navbar() {
         <div className="flex w-full justify-between gap-1 ">
           {Object.keys(icons).map((key) => (
             <DropdownButton
-              
               key={key}
               icon={icons[key]}
               onClick={() => openModal(key)}

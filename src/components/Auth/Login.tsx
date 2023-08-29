@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ReactSVG } from "react-svg";
 import { RotatingLines } from "react-loader-spinner";
 
-import { Logo } from "../Logo";
+import { Logo } from "@/svg-icons/Logo";
 import { useLogin } from "../../providers/LoginProvider";
 import { ToastContainer, toast } from "react-toastify";
 

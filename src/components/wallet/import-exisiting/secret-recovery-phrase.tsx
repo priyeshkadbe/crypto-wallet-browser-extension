@@ -90,10 +90,10 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
         Enter The Secret Recovery Phrase
       </h1>
 
-      <div className="grid grid-cols-3 gap-4 m-2">
+      <div className="grid grid-cols-3 gap-4 md:gap-8 m-2">
         {inputValues.map((value, index) => (
           <div key={index} className="flex items-center space-x-2">
-            <span>{index + 1}.</span>
+            <span className="text-gray-200">{index + 1}.</span>
             <input
               type={showPasswords[index] ? "text" : "password"}
               value={value}

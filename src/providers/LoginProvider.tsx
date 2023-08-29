@@ -4,6 +4,12 @@ import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
 import Cookies from "js-cookie";
 import { getProvider } from "@/utils/providers";
+import {
+  comparePassword,
+  hashedPassword,
+  decryptMnemonic,
+  encryptMnemonic,
+} from "@/utils/hashingAndEncrypting";
 
 interface LoginContextType {
   isLoggedIn: boolean;
@@ -20,8 +26,9 @@ interface LoginContextType {
   account: string | null;
   network: string | null;
   setNetwork: (value: string | null) => void;
-  chainId: number | null;
-  setChainId: (val: number | null) => void;
+  chainId: number;
+  setChainId: (val: number) => void;
+  addAccount: () => void;
 }
 
 const LoginContext = React.createContext<LoginContextType | null>(null);
@@ -45,8 +52,8 @@ export const LoginContextProvider = ({ children }: Props) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [network, setNetwork] = useState<string | null>(null);
-  const [chainId, setChainId] = useState<number | null>(11155111);
-
+  const [chainId, setChainId] = useState<number>(11155111);
+  const [accounts, setAccounts] = useState<string[]>([]);
   useEffect(() => {
     const pass = Cookies.get("password"); // Use Cookies.get instead of localStorage.getItem
     console.log("localPass", pass);
@@ -59,136 +66,53 @@ export const LoginContextProvider = ({ children }: Props) => {
     return Cookies.get("password") !== undefined; // Use Cookies.get instead of localStorage.getItem
   };
 
-  const createWallet = (mnemonic: string) => {
-    try {
-      if (chainId === null) {
-        return false;
-      }
+  useEffect(() => {
+    changeNetwork(chainId!);
+  }, [chainId]);
 
-      const provider = new ethers.providers.JsonRpcProvider(getProvider(chainId));;
+  const changeNetwork = (chainId: number) => {
+    setChainId(chainId);
+    if (wallet !== null) {
+      const provider = new ethers.providers.JsonRpcProvider(
+        getProvider(chainId)
+      );
       console.log("provider is ", getProvider(chainId));
-      const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
-      if (wallet.address) {
-        const data = {
-          address: wallet.address,
-          publicKey: wallet.publicKey,
-          privateKey: wallet.privateKey,
-          mnemonic: wallet.mnemonic.phrase,
-        };
-        setWallet(data);
-        console.log("data is ", data);
-
-        provider.getNetwork().then((val) => {
-          setNetwork(val.name);
-          console.log("logoUrl:", val);
-          console.log("provider.getSigner", provider.getSigner());
-        });
-        provider.getBalance(wallet.address).then((val) => {
-          setBalance(val.toString());
-        });
-
-        //console.log("locWallet", locWallet);
-        provider.getNetwork().then((bal) => {
-          console.log("balance is :", bal.name);
-        });
-
-      }
-
-      const locWallet = new ethers.Wallet(wallet.privateKey, provider);
-
-      console.log("loc wallet", locWallet);
-      setAccount(locWallet.address);
-
-      return wallet.address;
-    } catch (error) {
-      return error;
-    }
-  };
-
-  const login = (enteredPassword: string): boolean => {
-    const hashPassword = hashedPassword(enteredPassword);
-    const storedHashedPassword = Cookies.get("password"); // Use Cookies.get instead of localStorage.getItem
-    const encryptMnemonic = Cookies.get("mnemonic");
-    // console.log("hashPassword:", hashPassword);
-    // console.log("storedHashedPassword:", storedHashedPassword);
-    const isPasswordValid = comparePassword(enteredPassword, hashPassword);
-
-    if (
-      storedHashedPassword !== undefined &&
-      encryptMnemonic !== undefined &&
-      isPasswordValid
-    ) {
-      const decryptedMnemonic = decryptMnemonic(
-        encryptMnemonic,
-        enteredPassword
-      );
-      const localWallet = ethers.Wallet.fromMnemonic(
-        decryptedMnemonic.toString()
-      );
-
-      if (localWallet.address) {
-       const  data = {
-          address: localWallet.address,
-          publicKey: localWallet.publicKey,
-          privateKey: localWallet.privateKey,
-          mnemonic: localWallet.mnemonic.phrase,
-        };
-        console.log("here data is ", data);
-        setWallet(data);
-        return true;
-      }
-      return false;
-    }
-
-    return false;
-  };
-
-  const signup = (mnemonics: string, password: string): boolean => {
-    const hashPass = hashedPassword(password.toString());
-    Cookies.set("password", hashPass, { expires: 365 }); // Use Cookies.set instead of localStorage.setItem
-    createWallet(mnemonics);
-    encryptMnemonic(mnemonics, password).then((val) => {
-      Cookies.set("mnemonic", val.toString(), { expires: 365 });
-    });
-
-    const wallet = ethers.Wallet.fromMnemonic(mnemonics);
-    if (wallet.address) {
-      const data = {
-        address: wallet.address,
-        publicKey: wallet.publicKey,
-        privateKey: wallet.privateKey,
-        mnemonics: wallet.mnemonic.phrase,
-      };
-      setWallet({
-        address: wallet.address,
-        publicKey: wallet.publicKey,
-        privateKey: wallet.privateKey,
-        mnemonic: wallet.mnemonic.phrase,
+      provider.getNetwork().then((val) => {
+        setNetwork(val.name);
+        console.log("logoUrl:", val);
+        console.log("provider.getSigner", provider.getSigner());
       });
-      // setAddress(wallet.address);
-      const wall = Cookies.get("wallet"); // Use Cookies.get instead of localStorage.getItem
-      if (wall !== undefined) {
-        console.log("decrypted wallet", decryptMnemonic(wall, password));
-      }
-      console.log("wallet", data);
-      return true;
+      provider.getBalance(wallet.address).then((val) => {
+        setBalance(ethers.utils.formatEther(val).toString());
+      });
     }
-    return false;
   };
 
-  // const getProviderInstance = (chainId: number) => {
-  //   return new ethers.providers.JsonRpcProvider(getProvider(chainId));
-  // };
+  const addAccount = () => {
+    // if (wallet && wallet.mnemonic) {
+    //   const provider = new ethers.utils.HDNode.fromSeed(
+    //     wallet.mnemonic,
+    //     "https://mainnet.infura.io/v3/your-project-id"
+    //   );
+    //   const newWallet = new ethers.Wallet(provider);
+    //   if (newWallet.address) {
+    //     // Add the new account's address to the list of accounts
+    //     setAccounts((prevAccounts) => [...prevAccounts, newWallet.address]);
+    //     // You can perform additional actions if needed
+    //     console.log("new accounts", newWallet);
+    //   }
+    // }
+  };
 
-  // const createWallet = (mnemonic: string, chainId: number) => {
+  // const createWallet = (mnemonic: string) => {
   //   try {
   //     if (chainId === null) {
   //       return false;
   //     }
 
-  //     const provider = getProviderInstance(chainId);
-  //     const wallet = ethers.Wallet.fromMnemonic(mnemonic);
-
+  //     const provider = new ethers.providers.JsonRpcProvider(getProvider(chainId));;
+  //     console.log("provider is ", getProvider(chainId));
+  //     const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
   //     if (wallet.address) {
   //       const data = {
   //         address: wallet.address,
@@ -197,33 +121,41 @@ export const LoginContextProvider = ({ children }: Props) => {
   //         mnemonic: wallet.mnemonic.phrase,
   //       };
   //       setWallet(data);
+  //       console.log("data is ", data);
 
   //       provider.getNetwork().then((val) => {
   //         setNetwork(val.name);
   //         console.log("logoUrl:", val);
   //         console.log("provider.getSigner", provider.getSigner());
   //       });
-
   //       provider.getBalance(wallet.address).then((val) => {
   //         setBalance(val.toString());
   //       });
 
-  //       const locWallet = new ethers.Wallet(wallet.privateKey, provider);
-  //       console.log("loc wallet", locWallet);
-  //       setAccount(locWallet.address);
+  //       //console.log("locWallet", locWallet);
+  //       provider.getNetwork().then((bal) => {
+  //         console.log("balance is :", bal.name);
+  //       });
 
-  //       return true;
   //     }
+
+  //     const locWallet = new ethers.Wallet(wallet.privateKey, provider);
+
+  //     console.log("loc wallet", locWallet);
+  //     setAccount(locWallet.address);
+
+  //     return wallet.address;
   //   } catch (error) {
-  //     return false;
+  //     return error;
   //   }
   // };
 
   // const login = (enteredPassword: string): boolean => {
   //   const hashPassword = hashedPassword(enteredPassword);
-  //   const storedHashedPassword = Cookies.get("password");
+  //   const storedHashedPassword = Cookies.get("password"); // Use Cookies.get instead of localStorage.getItem
   //   const encryptMnemonic = Cookies.get("mnemonic");
-
+  //   // console.log("hashPassword:", hashPassword);
+  //   // console.log("storedHashedPassword:", storedHashedPassword);
   //   const isPasswordValid = comparePassword(enteredPassword, hashPassword);
 
   //   if (
@@ -235,32 +167,140 @@ export const LoginContextProvider = ({ children }: Props) => {
   //       encryptMnemonic,
   //       enteredPassword
   //     );
-  //     const walletCreated = createWallet(
-  //       decryptedMnemonic.toString(),
-  //       chainId!
+  //     const localWallet = ethers.Wallet.fromMnemonic(
+  //       decryptedMnemonic.toString()
   //     );
-  //     if (walletCreated) {
+
+  //     if (localWallet.address) {
+  //      const  data = {
+  //         address: localWallet.address,
+  //         publicKey: localWallet.publicKey,
+  //         privateKey: localWallet.privateKey,
+  //         mnemonic: localWallet.mnemonic.phrase,
+  //       };
+  //       console.log("here data is ", data);
+  //       setWallet(data);
   //       return true;
   //     }
-  //     false;
+  //     return false;
   //   }
 
   //   return false;
   // };
 
-  // const signup = (
-  //   mnemonics: string,
-  //   password: string,
-  //   chainId: number
-  // ): boolean => {
+  // const signup = (mnemonics: string, password: string): boolean => {
   //   const hashPass = hashedPassword(password.toString());
-  //   Cookies.set("password", hashPass, { expires: 365 });
-  //   const isLoggedin = login(hashPass);
-  //   if (isLoggedin) {
+  //   Cookies.set("password", hashPass, { expires: 365 }); // Use Cookies.set instead of localStorage.setItem
+  //   createWallet(mnemonics);
+  //   encryptMnemonic(mnemonics, password).then((val) => {
+  //     Cookies.set("mnemonic", val.toString(), { expires: 365 });
+  //   });
+
+  //   const wallet = ethers.Wallet.fromMnemonic(mnemonics);
+  //   if (wallet.address) {
+  //     const data = {
+  //       address: wallet.address,
+  //       publicKey: wallet.publicKey,
+  //       privateKey: wallet.privateKey,
+  //       mnemonics: wallet.mnemonic.phrase,
+  //     };
+  //     setWallet({
+  //       address: wallet.address,
+  //       publicKey: wallet.publicKey,
+  //       privateKey: wallet.privateKey,
+  //       mnemonic: wallet.mnemonic.phrase,
+  //     });
+  //     // setAddress(wallet.address);
+  //     const wall = Cookies.get("wallet"); // Use Cookies.get instead of localStorage.getItem
+  //     if (wall !== undefined) {
+  //       console.log("decrypted wallet", decryptMnemonic(wall, password));
+  //     }
+  //     console.log("wallet", data);
   //     return true;
   //   }
   //   return false;
   // };
+
+  const getProviderInstance = (chainId: number) => {
+    return new ethers.providers.JsonRpcProvider(getProvider(chainId));
+  };
+
+  const createWallet = (mnemonic: string, chainId: number) => {
+    try {
+      if (chainId === null) {
+        return false;
+      }
+      const provider = getProviderInstance(chainId);
+      const wallet = ethers.Wallet.fromMnemonic(mnemonic);
+
+      if (wallet.address) {
+        const data = {
+          address: wallet.address,
+          publicKey: wallet.publicKey,
+          privateKey: wallet.privateKey,
+          mnemonic: wallet.mnemonic.phrase,
+        };
+        setWallet(data);
+
+        provider.getNetwork().then((val) => {
+          setNetwork(val.name);
+          console.log("logoUrl:", val);
+          console.log("provider.getSigner", provider.getSigner());
+        });
+
+        provider.getBalance(wallet.address).then((val) => {
+          setBalance(val.toString());
+        });
+
+        const locWallet = new ethers.Wallet(wallet.privateKey, provider);
+        console.log("loc wallet", locWallet);
+        setAccount(locWallet.address);
+
+        return true;
+      }
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const login = (enteredPassword: string): boolean => {
+    const hashPassword = hashedPassword(enteredPassword);
+    const storedHashedPassword = Cookies.get("password");
+    const enMnemonic = Cookies.get("mnemonic");
+
+    const isPasswordValid = comparePassword(enteredPassword, hashPassword);
+    console.log("isPasswordValid", isPasswordValid);
+    if (
+      storedHashedPassword !== undefined &&
+      enMnemonic !== undefined &&
+      isPasswordValid
+    ) {
+      const decryptedMnemonic = decryptMnemonic(enMnemonic, enteredPassword);
+      console.log("decryptedMnemonic", decryptedMnemonic);
+      const walletCreated = createWallet(decryptedMnemonic.toString(), chainId);
+      console.log("walletCreated", walletCreated);
+      if (walletCreated) {
+        return true;
+      }
+      false;
+    }
+    return false;
+  };
+
+  const signup = (mnemonics: string, password: string): boolean => {
+    const hashPass = hashedPassword(password.toString());
+    Cookies.set("password", hashPass, { expires: 365 });
+
+    encryptMnemonic(mnemonics, password).then((val) => {
+      Cookies.set("mnemonic", val.toString());
+    });
+
+    const isLoggedin = login(hashPass);
+    if (isLoggedin) {
+      return true;
+    }
+    return false;
+  };
 
   const signOut = (): boolean => {
     Cookies.remove("password");
@@ -293,6 +333,7 @@ export const LoginContextProvider = ({ children }: Props) => {
     setNetwork,
     chainId,
     setChainId,
+    addAccount,
   };
 
   return (
@@ -308,43 +349,6 @@ export const useLogin = (): LoginContextType => {
   }
 
   return context;
-};
-
-const comparePassword = (enteredPassword: string, hashedPassword: string) => {
-  if (hashedPassword === undefined) {
-    return false;
-  }
-  return bcrypt.compareSync(enteredPassword, hashedPassword);
-};
-
-const hashedPassword = (password: string) => {
-  const salt = bcrypt.genSaltSync(10);
-  return bcrypt.hashSync(password, salt);
-};
-
-const decryptMnemonic = (encryptedMnemonic: string, password: string) => {
-  return CryptoJS.AES.decrypt(encryptedMnemonic, password).toString(
-    CryptoJS.enc.Utf8
-  );
-};
-
-// const decryptMnemonic = (encryptedMnemonic: string, password: string) => {
-//   console.log("Decryption Input: ", encryptedMnemonic, password);
-//   try {
-//     const decryptedData = CryptoJS.AES.decrypt(
-//       encryptedMnemonic.toString(),
-//       password
-//     ).toString(CryptoJS.enc.Utf8);
-//     console.log("Decryption Result: ", decryptedData);
-//     return decryptedData;
-//   } catch (error) {
-//     console.error("Decryption Error: ", error);
-//     return ""; // Handle decryption error gracefully
-//   }
-// };
-
-const encryptMnemonic = async (mnemonic: string, password: string) => {
-  return CryptoJS.AES.encrypt(mnemonic, password);
 };
 
 export default LoginContext;

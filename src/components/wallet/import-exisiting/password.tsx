@@ -47,7 +47,7 @@ export const Password: React.FC<PasswordProps> = ({
       <h1 className="text-3xl font-semibold p-4">Create Password</h1>
       <div className="">
         <div className="m-3">
-          <label className="block m-2 text-sm font-medium text-gray-900 ">
+          <label className="block m-2 text-sm font-medium text-white ">
             Password
           </label>
           <input
@@ -60,7 +60,7 @@ export const Password: React.FC<PasswordProps> = ({
           />
         </div>
         <div className="m-3">
-          <label className="block m-2 text-sm font-medium text-gray-900 ">
+          <label className="block m-2 text-sm font-medium text-white ">
             Confirm password
           </label>
           <input

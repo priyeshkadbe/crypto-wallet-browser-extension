@@ -1,15 +1,9 @@
-
-
 "use client";
 import { useNavigate } from "react-router-dom";
-import { Logo } from "../Logo";
-
+import { Logo } from "@/svg-icons/Logo";
 
 function Signup() {
-  
   const navigate = useNavigate();
-
-
 
   return (
     <div className="flex bg-[#0d0d0d] flex-col justify-center items-center gap-4 h-screen  md:h-[768px] md:w-[768px] md:rounded-lg">
