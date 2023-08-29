@@ -26,13 +26,13 @@ function HomePage() {
   const [selectedOption, setSelectedOption] = useState<string>("tokens"); // Initialize with "tokens"
 
   const [activeModal, setActiveModal] = useState<string | null>(null); // Track the active modal
-  const [localAddress, setLocalAddress] = useState<string | null>(null);
+  const [localAddress, setLocalAddress] = useState<string | null>("");
 
-  const { balance, network, account,wallet } = useLogin();
+  const { balance, network, account,wallet,chainId } = useLogin();
 
   useEffect(() => {
     
-  }, [account, balance,wallet]);
+  }, [account, balance,wallet,chainId]);
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -70,6 +70,8 @@ function HomePage() {
     }
   };
 
+  
+
   return (
     <div className="  bg-[#0d0d0d]  md:shadow-2xl  h-screen  md:h-[768px] md:w-[768px] md:rounded-xl">
       <ToastContainer />
@@ -80,10 +82,10 @@ function HomePage() {
         <div className="flex flex-col my-4 justify-center items-center   ">
           <div className="flex gap-2 py-2 px-4 m-2 bg-gray-700  rounded-full cursor-text">
             <h1 className="text-[#b3b3b3] text-xl">
-              {wallet?.address.slice(0, 7)}....{wallet?.address.slice(-4)}
+              {account?.slice(0, 7)}....{account?.slice(-4)}
             </h1>
-            {/* <CopyToClipboard
-              text={localAddress}
+            <CopyToClipboard
+              text={account}
               onCopy={() => {
                 toast.success("Seed phrase copied to clipboard");
               }}
@@ -91,10 +93,10 @@ function HomePage() {
               <button>
                 <ClipboardDocumentIcon className="h-4 w-4" />
               </button>
-            </CopyToClipboard> */}
-            {localAddress && (
-              <CopyToClipboard
-                text={localAddress}
+            </CopyToClipboard>
+
+            {/* <CopyToClipboard
+                text={wallet?.address}
                 onCopy={() => {
                   toast.success("Seed phrase copied to clipboard");
                 }}
@@ -102,9 +104,8 @@ function HomePage() {
                 <button>
                   <ClipboardDocumentIcon className="h-4 w-4" />
                 </button>
-              </CopyToClipboard>
-            )}
-            {!localAddress && <p>Please import your wallet</p>}
+              </CopyToClipboard> */}
+            {/* {!localAddress && <p>Please import your wallet</p>}  */}
           </div>
           <div className="m-2 my-4">
             <h1 className="text-3xl text-white">{balance}</h1>

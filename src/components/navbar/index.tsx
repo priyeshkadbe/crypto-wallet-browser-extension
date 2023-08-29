@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CurrencyRupeeIcon,
   ChevronDownIcon,
   GlobeAltIcon,
   LockClosedIcon,
   EllipsisVerticalIcon,
-  ArrowUpRightIcon,
-  ArrowsRightLeftIcon,
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
 import NetworkDropdown from "./dropdown/NetworkDropdown";
 import AccountDropdown from "./dropdown/AccountDropdown";
 import MenuDropdown from "./dropdown/MenuDropdown";
 import DropdownButton from "./dropdown/DropdownButton"; // Import the DropdownButton component
+import { Ethereum } from "@/svg-icons/Ethereum"
+import {Polygon} from "@/svg-icons/Polygon"
+import { useLogin } from "@/providers/LoginProvider";
 
 interface ModalInfo {
   title: string;
@@ -23,6 +24,11 @@ interface ModalInfo {
 function Navbar() {
   const [selectedOption, setSelectedOption] = useState<string>("tokens");
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const {chainId} = useLogin()
+
+  useEffect(() => {
+    
+  },[chainId])
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -54,7 +60,12 @@ function Navbar() {
   };
 
   const icons: Record<string, React.ReactNode> = {
-    network: <GlobeAltIcon className="h-8 w-8 " />,
+    network:
+      chainId === 1 || chainId === 11155111 || chainId === 5 ? (
+        <Ethereum  />
+      ) : (
+        <Polygon  />
+      ),
     accounts: <UserCircleIcon className="h-8 w-8  " />,
     menu: <EllipsisVerticalIcon className="h-8 w-8" />,
   };

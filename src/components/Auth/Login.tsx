@@ -89,7 +89,7 @@ function Login() {
             unlock
           </button>
           <button
-            onClick={() => navigate("/enter-recovery-phrase")}
+            onClick={() => navigate("/import-existing")}
             className="text-[#2f80ed] text-xl my-2"
           >
             forgot password ?

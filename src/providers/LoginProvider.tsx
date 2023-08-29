@@ -53,7 +53,7 @@ export const LoginContextProvider = ({ children }: Props) => {
     if (pass !== undefined) {
       setSignup(true);
     }
-  }, [localPassword, chainId]);
+  }, [localPassword, chainId,network,wallet,balance]);
 
   const isPasswordPresent = () => {
     return Cookies.get("password") !== undefined; // Use Cookies.get instead of localStorage.getItem
@@ -79,11 +79,10 @@ export const LoginContextProvider = ({ children }: Props) => {
 
       provider.getNetwork().then((val) => {
         setNetwork(val.name);
-
         console.log("logoUrl:", val);
       });
       provider.getBalance(wallet.address).then((val) => {
-        setBalance(ethers.utils.formatEther(val).toString());
+        setBalance(val.toString());
       });
 
       console.log("locWallet", locWallet);
@@ -237,10 +236,25 @@ const hashedPassword = (password: string) => {
   return bcrypt.hashSync(password, salt);
 };
 
+// const decryptMnemonic = (encryptedMnemonic: string, password: string) => {
+//   return CryptoJS.AES.decrypt(encryptedMnemonic.toString(), password).toString(
+//     CryptoJS.enc.Utf8
+//   );
+// };
+
 const decryptMnemonic = (encryptedMnemonic: string, password: string) => {
-  return CryptoJS.AES.decrypt(encryptedMnemonic.toString(), password).toString(
-    CryptoJS.enc.Utf8
-  );
+  console.log("Decryption Input: ", encryptedMnemonic, password);
+  try {
+    const decryptedData = CryptoJS.AES.decrypt(
+      encryptedMnemonic.toString(),
+      password
+    ).toString(CryptoJS.enc.Utf8);
+    console.log("Decryption Result: ", decryptedData);
+    return decryptedData;
+  } catch (error) {
+    console.error("Decryption Error: ", error);
+    return ""; // Handle decryption error gracefully
+  }
 };
 
 const encryptMnemonic = async (mnemonic: string, password: string) => {
