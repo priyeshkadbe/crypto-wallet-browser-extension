@@ -64,7 +64,6 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
         toast.error("please fill all the fields");
         return;
       }
-      console.log(inputValues.join(" "));
       let isWalletExits = await ethers.utils.isValidMnemonic(
         inputValues.join(" ")
       );

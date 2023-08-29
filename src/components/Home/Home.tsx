@@ -87,7 +87,7 @@ function HomePage() {
             <CopyToClipboard
               text={account}
               onCopy={() => {
-                toast.success("Seed phrase copied to clipboard");
+                toast.success(`${wallet?.address} copied to clipboard`);
               }}
             >
               <button>

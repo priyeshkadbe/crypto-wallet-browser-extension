@@ -6,29 +6,17 @@ import { ethers } from "ethers";
 export function getProvider(chainId: number) {
   switch (chainId) {
     case 1:
-      return new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_ETHEREUM_PROVIDER
-      );
+      return process.env.NEXT_PUBLIC_ETHEREUM_PROVIDER;
     case 5:
-      return new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_GOERLI_PROVIDER
-      );
+      return process.env.NEXT_PUBLIC_GOERLI_PROVIDER;
     case 137:
-      return new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_POLYGON_MAINNET_PROVIDER
-      );
+      return process.env.NEXT_PUBLIC_POLYGON_MAINNET_PROVIDER;
     case 80001:
-      return new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_MUMBAI_TESTNET_PROVIDER
-      );
+      return process.env.NEXT_PUBLIC_MUMBAI_TESTNET_PROVIDER;
     case 11155111:
-      return new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER
-      );
+      return process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER;
     default:
-      return new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_DEFAULT_PROVIDER
-      );
+      return process.env.NEXT_PUBLIC_DEFAULT_PROVIDER;
   }
 }
 

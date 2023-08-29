@@ -32,7 +32,6 @@ export const Password: React.FC<PasswordProps> = ({
       return;
     }
     setPassword(pass)
-    console.log(pass);
     onNext();
   };
 

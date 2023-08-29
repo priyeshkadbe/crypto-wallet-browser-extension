@@ -26,10 +26,8 @@ function Login() {
     if (inputValue === null || inputValue === "") {
       toast.error("please fill the password");
     } else {
-      console.log("password is", inputValue);
       const isLogged = login(inputValue);
       if (isLogged) {
-        console.log("isLogged", isLogged);
         navigate("/home");
         return;
       }

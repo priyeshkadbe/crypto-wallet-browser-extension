@@ -20,51 +20,24 @@ export default function ImportExisting() {
 
   const { signup, isLoggedIn, localPassword } = useLogin();
 
-  // useEffect(() => {
-  //    console.log("ImportExisting re-rendered with isLoading:", isLoading);
-  // },[isSubmit])
-  // Define your state to hold form data
-  // const [formData, setFormData] = useState<FormData>({
-  //   password: "",
-  //   secretPhrase: "",
-  // });
-
-  // useEffect(() => {}, [isLoggedIn, localPassword]);
 
   const handleNextStep = () => {
     setStep(step + 1);
   };
 
-  // const handleNextStep = async () => {
-  //   try {
-  //     const accountExists = await checkAccountExists(
-  //       formData.secretPhrase.toString()
-  //     );
-  //     if (accountExists) {
-  //       setStep(step + 1);
-  //     } else {
-  //       console.log("Wrong seed phrase");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error checking account existence:", error);
-  //   }
-  // };
 
   const handleSignup = async () => {
-    console.log("running2");
+   
     setIsLoading(true);
-    console.log("data sending", secretPhrase.toString(), password.toString());
     const isSignIn = await signup(secretPhrase.toString(), password.toString());
-    console.log("isSignIn", isSignIn);
     if (isSignIn) {
       toast.success("logging");
-      console.log("yes");
       navigate("/home");
       setIsLoading(false);
     } else {
-      toast.error("something went wrong in the singup process");
+      toast.error("something went wrong in the signup process");
     }
-    // setIsLoading(false)
+
   };
 
   useEffect(() => {
@@ -72,8 +45,6 @@ export default function ImportExisting() {
       handleSignup();
     }
   }, [isSubmit]);
-
-  // const validateSecretPhrase = () => {};
 
   const handlePrevStep = () => {
     setStep(step - 1);
@@ -103,19 +74,7 @@ export default function ImportExisting() {
         return null;
     }
   };
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex items-center justify-center">
-  //       <RotatingLines
-  //         strokeColor="white"
-  //         strokeWidth="5"
-  //         animationDuration="0.75"
-  //         width="96"
-  //         visible={true}
-  //       />
-  //     </div>
-  //   );
-  // }
+
   return (
     <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
       {isLoading ? (

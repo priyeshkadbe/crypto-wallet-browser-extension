@@ -60,14 +60,27 @@ function Navbar() {
   };
 
   const icons: Record<string, React.ReactNode> = {
-    network:
-      chainId === 1 || chainId === 11155111 || chainId === 5 ? (
-        <Ethereum  />
-      ) : (
-        <Polygon  />
-      ),
-    accounts: <UserCircleIcon className="h-8 w-8  " />,
-    menu: <EllipsisVerticalIcon className="h-8 w-8" />,
+    network: (
+      <>
+        <h2 className="hidden md:flex ">Networks</h2>
+        {chainId === 1 || chainId === 11155111 || chainId === 5 ? (
+          <Ethereum />
+        ) : (
+          <Polygon />
+        )}
+      </>
+    ),
+    accounts: (
+      <>
+        <h2 className="text-white  ">Accounts</h2>
+        <ChevronDownIcon className="h-8 w-8  " />
+      </>
+    ),
+    menu: (
+      <>
+        <EllipsisVerticalIcon className="h-8 w-8" />
+      </>
+    ),
   };
 
   return (
@@ -76,7 +89,7 @@ function Navbar() {
         <div className="flex w-full justify-between gap-1 ">
           {Object.keys(icons).map((key) => (
             <DropdownButton
-              text={key}
+              
               key={key}
               icon={icons[key]}
               onClick={() => openModal(key)}

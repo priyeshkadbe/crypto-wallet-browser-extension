@@ -58,29 +58,7 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
     return inputValues.every((value) => value.trim() !== "");
   };
 
-  // const handleNext = async () => {
-  //   try {
-  //     if (!isAllField()) {
-  //       toast.error("please fill all the fields");
-  //       return;
-  //     }
-  //     console.log(inputValues.join(" "));
-  //     // let isWalletExits = await ethers.utils.isValidMnemonic(
-  //     //   inputValues.join(" ")
-  //     // );
-  //     // if (!isWalletExits) {
-  //     //   toast.error("invalid mnemonic");
-  //     //   return;
-  //     // }
-  //     // secretPhrase = inputValues.toString();
-  //     if (secretPhrase === inputValues.toString()) {
-  //       console.log("yes")
-  //     }
-  //     onNext();
-  //   } catch (error) {
-  //     toast.error("something went wrong");
-  //   }
-  // };
+  
 
   const handleNext = async () => {
     
@@ -88,7 +66,6 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
         toast.error("please fill all the fields");
         return;
       }
-      console.log(inputValues.join(" "));
 
      if (inputValues.join(" ").toString() !== secretPhrase.toString()) {
         toast.error("wrong confirm ")
@@ -147,9 +124,6 @@ export const ConfirmSecretRecoveryPhase: React.FC<ConfirmSecurityPhaseProps> = (
         </button>
         <button
           type="button"
-          // onClick={onConfirm as () => void} // Cast to correct event type
-          // Pass event argument if needed
-          // onClick={() => navigate("/new-password")}
           onClick={handleNext}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >

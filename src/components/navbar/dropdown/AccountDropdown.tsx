@@ -22,11 +22,11 @@ interface AccountProps {
 
 const AccountContent = () => {
   
-  const { wallet } = useLogin();
+  const { account } = useLogin();
 
   useEffect(() => {
    
-  },[wallet])
+  },[account])
   return (
     <div className="flex flex-col w-full  gap-1">
       <div className="overflow-y-auto flex  flex-col  gap-2">
@@ -34,7 +34,7 @@ const AccountContent = () => {
           <CurrencyDollarIcon className="h-8 w-8" />
           <div className="flex flex-col">
             <h2 className="text-lg font-medium">Account 1</h2>
-            <h2 className="text-xs ">{wallet?.address.slice(0,7)}....{ wallet?.address.slice(-4)}</h2>
+            <h2 className="text-xs ">{account?.slice(0,7)}....{ account?.slice(-4)}</h2>
           </div>
         </button>
         {/* <button className="flex justify-start flex-grow items-start gap-2 p-2 border border-gray-600 w-full">

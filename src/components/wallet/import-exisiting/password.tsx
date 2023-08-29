@@ -17,7 +17,7 @@ export const Password: React.FC<PasswordProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const [pass, setPass] = useState<string|null>(null);
+  const [pass, setPass] = useState<string | null>(null);
   const [confirmPass, setConfirmPass] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,18 +27,18 @@ export const Password: React.FC<PasswordProps> = ({
       toast.error("The passwords do not match");
       return;
     }
+
     // if (pass.length < 6) {
     //   toast.error("The password must be greater than 5 characters");
     //   return;
     // }
     if (pass !== null) {
-       setIsSubmitting(true);
-       setPassword(pass);
-       console.log(pass);
+      setIsSubmitting(true);
+      setPassword(pass);
       setIsSubmit(true);
-      return
+      return;
     }
-   return
+    return;
   };
 
   return (

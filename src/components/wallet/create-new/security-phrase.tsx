@@ -31,7 +31,6 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
       const mnemonic = ethers.utils.entropyToMnemonic(entropy);
       setMnemonics(mnemonic);
       setSecretPhrase(mnemonic.toString());
-      console.log(mnemonic.toString);
     } catch (error) {
       return { error };
     }
@@ -59,7 +58,7 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
           rows={2}
           value={mnemonics}
           readOnly
-          className="m-2 outline-1 border border-gray-700 rounded-md p-4 flex "
+          className="m-2  outline-1 border border-gray-700 rounded-md p-4 flex "
         ></textarea>
       ) : (
         <div className="m-2 outline-1 border border-gray-700 rounded-md p-6 blur">

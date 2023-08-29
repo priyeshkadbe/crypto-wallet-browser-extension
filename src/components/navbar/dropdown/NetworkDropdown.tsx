@@ -27,31 +27,42 @@ const NetworkContent = () => {
   const [local, setLocal] = useState("");
   const [selectedChainId, setSelectedChainId] = useState<number | null>(null); // State to track the selected chainId
 
-
   useEffect(() => {
-     if (network !== null) {
+    if (network !== null) {
       setLocal(network.toString());
-     }
-    setSelectedChainId(chainId)
-  }, [network,chainId]);
+    }
+    setSelectedChainId(chainId);
+  }, [network, chainId]);
 
   return (
     <div className="flex flex-col   gap-2">
       <div className="overflow-y-auto">
         {networks_const.map((val, key) => (
           <button
-            className={`flex justify-start items-start my-2 flex-grow gap-2 p-2 border border-gray-600 w-full ${
-              val.chainId === selectedChainId ? "text-white" : "" // Apply text-white class if chainId matches the selectedChainId
+            className={`flex justify-start items-start my-2 flex-grow gap-2 p-2 border rounded-lg border-gray-600 w-full ${
+              val.chainId === selectedChainId ? "text-white border-white" : "" // Apply text-white class if chainId matches the selectedChainId
             }`}
             onClick={() => {
               setChainId(val.chainId);
               setSelectedChainId(val.chainId);
             }}
           >
-            <div className=" ">
-              <Polygon />
+            <div className="">
+              {val.chainId === 1 ||
+              val.chainId === 11155111 ||
+              val.chainId === 5 ? (
+                <Ethereum />
+              ) : (
+                <Polygon />
+              )}
             </div>
-            <h2 className="text-lg font-medium">{val.network}</h2>
+            <h2
+              className={`text-lg font-medium ${
+                val.chainId && "font-extrabold"
+              }`}
+            >
+              {val.network}
+            </h2>
           </button>
         ))}
       </div>

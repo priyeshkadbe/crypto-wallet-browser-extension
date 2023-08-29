@@ -32,18 +32,7 @@ export default function ImportExisting() {
     setStep(step + 1);
   };
 
-  // if (typeof localPassword === 'string') {
-  //    setIsLoading(true);
-  //    const isAuth =  signup(secretPhrase.toString(), password.toString());
-  //    if (isAuth) {
-  //      setIsLoading(false);
-  //      console.log("isAuth", isAuth);
-  //      navigate("/home");
-  //      return;
-  //    }
-  //    toast.error("something went wrong in the validation");
-  //    setIsLoading(false);
-  // }
+
 
 
   const handleSubmit = async () => {
@@ -53,7 +42,6 @@ export default function ImportExisting() {
       const isAuth = await signup(secretPhrase, password);
       if (isAuth) {
         setIsLoading(false);
-        console.log("isAuth", isAuth);
         navigate("/home");
         return;
       }
