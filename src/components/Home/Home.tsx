@@ -28,8 +28,12 @@ function HomePage() {
   const [activeModal, setActiveModal] = useState<string | null>(null); // Track the active modal
   const [localAddress, setLocalAddress] = useState<string | null>("");
 
-  const { balance, network, account,wallet,chainId } = useLogin();
+  const { balance, network, account,wallet,chainId,isLoggedIn,isSignup } = useLogin();
 
+  useEffect(() => {
+    
+  }, [isLoggedIn, isSignup])
+  
   useEffect(() => {
     
   }, [account, balance,wallet,chainId]);

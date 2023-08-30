@@ -65,7 +65,7 @@ export const LoginContextProvider = ({ children }: Props) => {
     if (pass !== undefined && mne !== undefined) {
       setLocalMnemonics(mne);
       setLocalPassword(pass);
-      setSignup(true);
+      //setSignup(true);
     }
   }, [localPassword, chainId, network, wallet, balance]);
 

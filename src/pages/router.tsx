@@ -48,7 +48,6 @@ export default function Router() {
           <Route path="/signup" element={<Signup />}  />
           <Route path="/import-existing" element={<ImportExisiting />} />
           <Route path="/create-new" element={<CreateNew />} />
-
           <Route path="*" element={<Navigate to="/signup" />} />
         </Routes>
       ))}
