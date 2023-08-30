@@ -6,66 +6,90 @@ import { SecretRecoveryPhase } from "./secret-recovery-phrase";
 import { Password } from "./password";
 import { mnemonicToSeed } from "ethers/lib/utils";
 import Stages from "./stages";
-import { useLogin } from "@/providers/LoginProvider"
+import { useLogin } from "@/providers/LoginProvider";
 import { RotatingLines } from "react-loader-spinner";
-import { ToastContainer,toast } from "react-toastify";
-
+import { ToastContainer, toast } from "react-toastify";
 
 export default function ImportExisting() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { login, signup, localPassword } = useLogin();
-
-  // Define your state to hold form data
-  
- 
-  
-  const [password, setPassword] = useState<string|null>(null);
+  const { isLoggedIn, isSignup, login, signup, localPassword } = useLogin();
+  const [password, setPassword] = useState<string | null>(null);
   const [secretPhrase, setSecretPhrase] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
 
- 
+  useEffect(() => {}, [isLoggedIn, isSignup, isLoading]);
 
   const handleNextStep = () => {
     setStep(step + 1);
   };
 
-
-
-
   const handleSubmit = async () => {
-    
-    if (password !== null) {
+    try {
+      if (password === null) {
+        toast.error("Something is wrong");
+        return;
+      }
       setIsLoading(true);
       const isAuth = await signup(secretPhrase, password);
       if (isAuth) {
-        setIsLoading(false);
         navigate("/home");
-        return;
+      } else {
+        toast.error("Something went wrong in the validation");
+        setIsLoading(false);
       }
-      toast.error("something went wrong in the validation");
+    } catch (error) {
+      //console.error("An error occurred:", error);
       setIsLoading(false);
-      return
+      toast.error("An error occurred. Please try again.");
     }
-    toast.error("something is wrong")
-    
-  }
+  };
 
-    useEffect(() => {
-      if (isSubmit) {
-        handleSubmit();
-      }
-    }, [isSubmit, localPassword]);
- 
+  // const handleSubmit = async () => {
+  //   try {
+  //     if (password === null) {
+  //       toast.error("Something is wrong");
+  //       return;
+  //     }
+
+  //     setIsLoading(true);
+
+  //     const isAuth = await signup(secretPhrase, password);
+
+  //     if (isAuth) {
+  //       // Wait for isLoggedIn to become true before navigating
+  //       const checkLoggedInInterval = setInterval(() => {
+  //         if (isLoggedIn) {
+  //           clearInterval(checkLoggedInInterval); // Stop checking
+  //           setIsLoading(false);
+  //           navigate("/home");
+  //         }
+  //       }, 100); // Check every 100 milliseconds
+  //     } else {
+  //       toast.error("Something went wrong in the validation");
+  //       setIsLoading(false);
+  //     }
+  //   } catch (error) {
+  //     //console.error("An error occurred:", error);
+  //     setIsLoading(false);
+  //     toast.error("An error occurred. Please try again.");
+  //   }
+  // };
+
+  useEffect(() => {
+    if (isSubmit) {
+      setIsLoading(true);
+      handleSubmit();
+    }
+  }, [isSubmit]);
+
   const handleStageClick = (stepNumber: number) => {
     if (stepNumber < step) {
       setStep(stepNumber);
     }
   };
-
-
 
   const renderForm = () => {
     switch (step) {
@@ -84,41 +108,22 @@ export default function ImportExisting() {
   };
 
   return (
-    <div>
+    <div className="bg-[#0d0d0d] h-screen  flex flex-col justify-center items-center md:h-[768px] md:w-[768px] md:rounded-lg">
       <ToastContainer />
-      {/* {isLoading ? (
-        <div className="justify-center items-center">
-          <RotatingLines
-            strokeColor="grey"
-            strokeWidth="5"
-            animationDuration="0.75"
-            width="96"
-            visible={true}
-          />
-        </div>
+      {isLoading ? (
+        <RotatingLines
+          strokeColor="white"
+          strokeWidth="5"
+          animationDuration="0.75"
+          width="96"
+          visible={true}
+        />
       ) : (
-        
-      )} */}
-      {/* <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center  md:h-[768px] md:w-[768px] md:rounded-lg">
-        <Stages currentStep={step} />
-        {renderForm()}
-      </div> */}
-      <div className="bg-[#0d0d0d] h-screen  md:flex md:flex-col md:justify-center md:items-center md:h-[768px] md:w-[768px] md:rounded-lg">
-        {isLoading ? (
-          <RotatingLines
-            strokeColor="white"
-            strokeWidth="5"
-            animationDuration="0.75"
-            width="96"
-            visible={true}
-          />
-        ) : (
-          <>
-            <Stages currentStep={step} />
-            {renderForm()}
-          </>
-        )}
-      </div>
+        <>
+          <Stages currentStep={step} />
+          {renderForm()}
+        </>
+      )}
     </div>
   );
 }

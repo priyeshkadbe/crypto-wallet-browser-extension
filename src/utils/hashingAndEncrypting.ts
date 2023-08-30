@@ -14,6 +14,8 @@ const hashedPassword = (password: string) => {
 };
 
 const decryptMnemonic = (encryptedMnemonic: string, password: string) => {
+  // return CryptoJS.AES.decrypt(encryptedMnemonic, password).toString(
+  //   CryptoJS.enc.Utf8);
   return CryptoJS.AES.decrypt(encryptedMnemonic, password).toString(
     CryptoJS.enc.Utf8
   );
@@ -23,9 +25,4 @@ const encryptMnemonic = async (mnemonic: string, password: string) => {
   return CryptoJS.AES.encrypt(mnemonic, password).toString();
 };
 
-export  {
-  comparePassword,
-  hashedPassword,
-  decryptMnemonic,
-  encryptMnemonic
-}
+export { comparePassword, hashedPassword, decryptMnemonic, encryptMnemonic };

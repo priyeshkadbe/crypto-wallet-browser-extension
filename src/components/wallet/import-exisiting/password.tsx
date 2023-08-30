@@ -22,18 +22,16 @@ export const Password: React.FC<PasswordProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = () => {
-    if (isSubmitting) return;
     if (pass !== confirmPass) {
       toast.error("The passwords do not match");
       return;
     }
 
-    // if (pass.length < 6) {
-    //   toast.error("The password must be greater than 5 characters");
-    //   return;
-    // }
+    if (pass===null || pass.length < 6) {
+      toast.error("The password must be greater than 5 characters");
+      return;
+    }
     if (pass !== null) {
-      setIsSubmitting(true);
       setPassword(pass);
       setIsSubmit(true);
       return;

@@ -18,31 +18,40 @@ export default function ImportExisting() {
   const [password, setPassword] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
 
-  const { signup, isLoggedIn, localPassword } = useLogin();
+  const { isSignup,signup, isLoggedIn, localPassword } = useLogin();
 
+
+  useEffect(() => {}, [isLoggedIn, isSignup,isLoading]);
 
   const handleNextStep = () => {
     setStep(step + 1);
   };
 
 
-  const handleSignup = async () => {
-   
-    setIsLoading(true);
-    const isSignIn = await signup(secretPhrase.toString(), password.toString());
-    if (isSignIn) {
-      toast.success("logging");
-      navigate("/home");
+  const handleSubmit = async () => {
+    try {
+      if (password === null) {
+        toast.error("Something is wrong");
+        return;
+      }
+      setIsLoading(true);
+      const isAuth = await signup(secretPhrase, password);
+      if (isAuth) {
+        navigate("/home");
+      } else {
+        toast.error("Something went wrong in the validation");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      //console.error("An error occurred:", error);
       setIsLoading(false);
-    } else {
-      toast.error("something went wrong in the signup process");
+      toast.error("An error occurred. Please try again.");
     }
-
   };
 
   useEffect(() => {
     if (isSubmit) {
-      handleSignup();
+      handleSubmit();
     }
   }, [isSubmit]);
 

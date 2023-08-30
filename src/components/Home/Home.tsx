@@ -84,7 +84,7 @@ function HomePage() {
             <h1 className="text-[#b3b3b3] text-xl">
               {account?.slice(0, 7)}....{account?.slice(-4)}
             </h1>
-            <CopyToClipboard
+            {/* <CopyToClipboard
               text={account}
               onCopy={() => {
                 toast.success(`${wallet?.address} copied to clipboard`);
@@ -93,7 +93,7 @@ function HomePage() {
               <button>
                 <ClipboardDocumentIcon className="h-4 w-4" />
               </button>
-            </CopyToClipboard>
+            </CopyToClipboard> */}
 
             {/* <CopyToClipboard
                 text={wallet?.address}

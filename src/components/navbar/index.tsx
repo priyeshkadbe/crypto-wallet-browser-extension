@@ -59,12 +59,12 @@ function Navbar() {
   const icons: Record<string, React.ReactNode> = {
     network: (
       <div className="flex justify-center items-center gap-x-4">
-        <h2 className="hidden md:flex ">
+        <span className="hidden md:flex ">
           {
             networks_const.find((network) => network.chainId === chainId)
               ?.network
           }
-        </h2>
+        </span>
         <div className="md:hidden">
           {chainId === 1 || chainId === 11155111 || chainId === 5 ? (
             <Ethereum />
@@ -77,7 +77,7 @@ function Navbar() {
     ),
     accounts: (
       <>
-        <h2 className="text-white  ">Accounts</h2>
+        <span className="text-white  ">Accounts</span>
         <ChevronDownIcon className="h-8 w-8  " />
       </>
     ),

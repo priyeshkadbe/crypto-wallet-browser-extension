@@ -37,8 +37,9 @@ const NetworkContent = () => {
   return (
     <div className="flex flex-col   gap-2">
       <div className="overflow-y-auto">
-        {networks_const.map((val, key) => (
+        {networks_const.map((val, index) => (
           <button
+            key={index}
             className={`flex justify-start items-start my-2 flex-grow gap-2 p-2 border rounded-lg border-gray-600 w-full ${
               val.chainId === selectedChainId ? "text-white border-white" : "" // Apply text-white class if chainId matches the selectedChainId
             }`}
