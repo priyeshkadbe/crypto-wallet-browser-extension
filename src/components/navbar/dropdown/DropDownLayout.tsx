@@ -29,7 +29,7 @@ const DropDownLayout: React.FC<DropDownLayoutProps> = ({
         <div className="p-6 space-y-6">
           <p
             className="text-base leading-relaxed text-gray-500"
-            onClick={onClose}
+            // onClick={onClose}
           >
             {content}
           </p>

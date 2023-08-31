@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { ethers } from "ethers";
+
 
 export function getProvider(chainId: number) {
   switch (chainId) {
@@ -19,6 +19,8 @@ export function getProvider(chainId: number) {
       return process.env.NEXT_PUBLIC_DEFAULT_PROVIDER;
   }
 }
+
+export const JWT_KEY = process.env.NEXT_PUBLIC_JWT_KEY;
 
 // export const PROVIDERS = [
 //   {

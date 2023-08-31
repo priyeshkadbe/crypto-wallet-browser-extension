@@ -28,7 +28,7 @@
     "dotenv": "^16.3.1",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
-    "ethers": "5.7.1",
+    "ethers": "^6.7.1",
     "heroicons": "^2.0.18",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",

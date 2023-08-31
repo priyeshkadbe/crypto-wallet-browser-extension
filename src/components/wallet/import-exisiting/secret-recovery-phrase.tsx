@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import * as bip39 from "bip39";
-import { ethers } from "ethers";
+import { EtherSymbol, ethers } from "ethers";
 import next from "next";
 interface SecretRecoveryPhaseProps {
   setSecretPhrase: (phrase: string) => void;
@@ -64,7 +64,7 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
         toast.error("please fill all the fields");
         return;
       }
-      let isWalletExits = await ethers.utils.isValidMnemonic(
+      let isWalletExits = await ethers.Mnemonic.isValidMnemonic(
         inputValues.join(" ")
       );
       if (!isWalletExits) {
