@@ -59,18 +59,18 @@ export const LoginContextProvider = ({ children }: Props) => {
   const [mnemonic, setLocalMnemonics] = useState<string | null>(null);
   const [planMnemonic, setPlainMnemonic] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   const token = Cookies.get("token");
-  //   if (token) {
-  //     isAuthenticated(token).then((valid) => {
-  //       if (valid) {
-  //         setIsLoggedIn(true);
-  //       } else {
-  //         setIsLoggedIn(false);
-  //       }
-  //     });
-  //   }
-  // });
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      isAuthenticated(token).then((valid) => {
+        if (valid) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      });
+    }
+  });
 
   useEffect(() => {
     const pass = Cookies.get("password");
@@ -80,9 +80,9 @@ export const LoginContextProvider = ({ children }: Props) => {
     if (pass !== undefined && mne !== undefined) {
       setLocalMnemonics(mne);
       setLocalPassword(pass);
-      setSignup(true);
+      //setSignup(true);
     }
-  }, [localPassword, chainId, network, wallet, balance]);
+  }, [isLoggedIn,localPassword, chainId, network, wallet, balance]);
 
   const isPasswordPresent = () => {
     return Cookies.get("password") !== undefined; // Use Cookies.get instead of localStorage.getItem
@@ -160,6 +160,64 @@ export const LoginContextProvider = ({ children }: Props) => {
     }
   };
 
+  //   const createWallet = async (mnemonic: string): Promise<boolean> => {
+  //   try {
+  //     const provider = new ethers.JsonRpcProvider(getProvider(chainId));
+  //     console.log("provider is ", provider);
+  //     provider.getBlockNumber().then((val) => {
+  //       console.log("block", val);
+  //     });
+
+  //     // Create an array to hold the accounts
+  //     const newAccounts = [];
+
+  //     for (let i = 0; i < 10; i++) {
+  //       // Derive a unique account from the mnemonic for each iteration
+  //       const hdnode = ethers.HDNodeWallet.fromPhrase(mnemonic);
+  //       const account = hdnode.derivePath(`m/44'/60'/0'/0/${i}`);
+
+  //       console.log("account", account);
+  //       if (await account.address) {
+  //         const data = {
+  //           address: account.address,
+  //           privateKey: account.privateKey,
+  //         };
+
+  //         // Push the account data to the array
+  //         newAccounts.push({
+  //           [`Account${i + 1}`]: {
+  //             address: data.address,
+  //             privateKey: data.privateKey,
+  //           },
+  //         });
+  //       }
+  //     }
+
+  //     // Set the new accounts array as the wallet
+  //     setWallet(newAccounts);
+
+  //     // Set the first account as the active account (you can change this logic if needed)
+  //     if (newAccounts.length > 0) {
+  //       setAccount(newAccounts[0][`Account1`].address);
+  //     }
+
+  //     // provider.getNetwork().then((val) => {
+  //     //   console.log(val);
+  //     //   setNetwork(val.toString());
+  //     // });
+
+  //     // provider.getBalance(wallet.address).then((val) => {
+  //     //   console.log(ethers.formatEther(val));
+  //     //   setBalance(ethers.formatEther(val));
+  //     // });
+
+  //     setIsLoggedIn(true);
+  //     return true;
+  //   } catch (error) {
+  //     return false;
+  //   }
+  // };
+
   const login = async (enteredPassword: string): Promise<boolean> => {
     try {
       let isPasswordValid = false;
@@ -177,7 +235,7 @@ export const LoginContextProvider = ({ children }: Props) => {
         const isWalletCreated = await createWallet(planMnemonic!);
         if (isWalletCreated) {
           setIsLoggedIn(true);
-          setSignup(true);
+          //setSignup(true);
           return true;
         }
 
@@ -243,19 +301,40 @@ export const LoginContextProvider = ({ children }: Props) => {
     }
   };
 
-  const switchAccount = async (privateKey: string): Promise<boolean> => {
+  const switchAccount = async (address: string): Promise<boolean> => {
     try {
-      console.log("switching")
-      const wallet = new ethers.Wallet(privateKey);
-      console.log("walet is",wallet)
-      const provider = new ethers.JsonRpcProvider(getProvider(chainId))
-      wallet.connect(provider);
-      
-      const address = wallet.address;
-      console.log("address", address);
-      setAccount(address);
+      // Find the wallet with the specified address
+      const selectedWallet = wallet?.find(
+        (accountData) =>
+          accountData[Object.keys(accountData)[0]].address === address
+      );
+
+      console.log("selectedWallet", selectedWallet);
+
+      if (!selectedWallet) {
+        // If the wallet with the provided address is not found, return false
+        return false;
+      }
+
+      const selectedPrivateKey =
+        selectedWallet[Object.keys(selectedWallet)[0]].privateKey;
+
+      console.log("selectedPrivateKey", selectedPrivateKey);
+
+      // Create a new ethers wallet using the selected private key
+      const newWallet = new ethers.Wallet(selectedPrivateKey);
+
+      console.log("newWallet", newWallet);
+
+      // Set the new wallet as the active wallet
+      setWallet([selectedWallet]);
+
+      // Set the new account and perform any other necessary updates
+      setAccount(newWallet.address);
+
       return true;
     } catch (error) {
+      console.error("Error switching account:", error);
       return false;
     }
   };

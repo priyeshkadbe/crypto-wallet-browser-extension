@@ -85,23 +85,28 @@ const AccountContent = () => {
     }
   };
 
-  const handleSwitchAccount = async (privateKey: string) => {
-    if (privateKey !== null || privateKey !== undefined || privateKey === "") {
-      const isSwitchAccount = await switchAccount(privateKey);
+  const handleSwitchAccount = async (address: string) => {
 
+    if (address !== null || address !== undefined || address === "") {
+      const isSwitchAccount = await switchAccount(address);
       if (isSwitchAccount) {
-        toast.success("account switched")
-        return
+        console.log("account switched");
+        return;
       }
-      toast.error("unable to switch account");
-      return
+
+      console.log("unable to swit account");
+      return;
     }
-    toast.error("unable to switch account");
+    console.log("unable to switch account");
     return
   };
 
+  
+
+
   return (
     <div>
+      {/* <ToastContainer /> */}
       <div>
         {addNewAccount ? (
           <div className="flex flex-col w-full gap-1">
@@ -143,7 +148,7 @@ const AccountContent = () => {
                   className="flex justify-start items-center flex-grow gap-2 p-2 border border-gray-600 w-full"
                   onClick={() =>
                     handleSwitchAccount(
-                      accountData[Object.keys(accountData)[0]].privateKey
+                      accountData[Object.keys(accountData)[0]].address
                     )
                   }
                 >
