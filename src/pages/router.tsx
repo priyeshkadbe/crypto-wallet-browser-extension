@@ -32,7 +32,7 @@ export default function Router() {
 
   return (
     <HashRouter>
-      {(isLoggedIn ) ? (
+      {(isLoggedIn  ) ? (
         <Routes>
           <Route path="/home" element={<HomePage />} />
           <Route path="*" element={<Navigate to="/home" replace />} />

@@ -10,7 +10,7 @@ import {
   decryptMnemonic,
   encryptMnemonic,
 } from "@/utils/hashingAndEncrypting";
-import {createToken,verifyToken} from "@/utils/jwt"
+import { createToken, verifyToken } from "@/utils/jwt";
 
 interface LoginContextType {
   isLoggedIn: boolean;
@@ -22,7 +22,7 @@ interface LoginContextType {
   isSignup: boolean;
   signOut: () => boolean;
   localPassword: string | null;
-  wallet: Wallet[] | null;
+  wallet: Wallet | null;
   balance: string | null;
   account: string | null;
   network: string | null;
@@ -30,6 +30,7 @@ interface LoginContextType {
   chainId: number;
   setChainId: (val: number) => void;
   addAccount: (val: string) => Promise<boolean>;
+  switchAccount: (val: string) => Promise<boolean>;
 }
 
 const LoginContext = React.createContext<LoginContextType | null>(null);
@@ -38,25 +39,38 @@ interface Props {
   children: ReactNode;
 }
 
-interface Wallet {
+interface WalletFields {
   address: string;
-  publicKey: string;
   privateKey: string;
-  mnemonic: string;
 }
+
+type Wallet = Array<Record<string, WalletFields>>;
 
 export const LoginContextProvider = ({ children }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSignup, setSignup] = useState(false);
   const [localPassword, setLocalPassword] = useState<string | null>(null);
   const [account, setAccount] = useState<string | null>(null);
-  const [wallet, setWallet] = useState<Wallet[] | null>([]);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [network, setNetwork] = useState<string | null>(null);
-  const [chainId, setChainId] = useState<number>(80001);
+  const [chainId, setChainId] = useState<number>(11155111);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [mnemonic, setLocalMnemonics] = useState<string | null>(null);
   const [planMnemonic, setPlainMnemonic] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   const token = Cookies.get("token");
+  //   if (token) {
+  //     isAuthenticated(token).then((valid) => {
+  //       if (valid) {
+  //         setIsLoggedIn(true);
+  //       } else {
+  //         setIsLoggedIn(false);
+  //       }
+  //     });
+  //   }
+  // });
 
   useEffect(() => {
     const pass = Cookies.get("password");
@@ -86,11 +100,12 @@ export const LoginContextProvider = ({ children }: Props) => {
       provider.getNetwork().then((val) => {
         setNetwork(val.name);
         console.log("logoUrl:", val);
-        console.log("provider.getSigner", provider.getSigner());
+        //console.log("provider.getSigner", provider.getSigner());
       });
       // provider.getBalance(address).then((val) => {
       //   setBalance(ethers.utils.formatEther(val).toString());
       // });
+      //provider.getBalance()
     }
   };
 
@@ -107,13 +122,23 @@ export const LoginContextProvider = ({ children }: Props) => {
       if (await wallet.address) {
         const data = {
           address: wallet.address,
-          publicKey: wallet.publicKey,
+          //publicKey: wallet.publicKey,
           privateKey: wallet.privateKey,
-          mnemonic: JSON.stringify(wallet.mnemonic?.phrase),
+          // mnemonic: JSON.stringify(wallet.mnemonic?.phrase),
         };
 
+        setWallet((prevWallet) => [
+          ...(prevWallet || []),
+          {
+            [`Account${(prevWallet?.length || 0) + 1}`]: {
+              address: data.address,
+              privateKey: data.privateKey,
+            },
+          },
+        ]);
+
         setAccount(wallet.address);
-        setWallet([data]);
+        // setWallet(data);
         console.log("data is ", data);
 
         provider.getNetwork().then((val) => {
@@ -125,7 +150,7 @@ export const LoginContextProvider = ({ children }: Props) => {
           console.log(ethers.formatEther(val));
           setBalance(ethers.formatEther(val));
         });
-
+        setIsLoggedIn(true);
         return true;
       }
 
@@ -134,6 +159,7 @@ export const LoginContextProvider = ({ children }: Props) => {
       return false;
     }
   };
+
   const login = async (enteredPassword: string): Promise<boolean> => {
     try {
       let isPasswordValid = false;
@@ -142,7 +168,8 @@ export const LoginContextProvider = ({ children }: Props) => {
       }
 
       if (mnemonic !== null && localPassword !== null && isPasswordValid) {
-
+        // const newJwt = await createToken(enteredPassword);
+        // Cookies.set("token", newJwt);
         const decryptedMnemonic = decryptMnemonic(mnemonic, enteredPassword);
         console.log("decryptMnemonic", decryptedMnemonic);
         setPlainMnemonic(decryptedMnemonic.toString());
@@ -176,11 +203,13 @@ export const LoginContextProvider = ({ children }: Props) => {
       });
 
       const isWalletCreated = await createWallet(mnemonics);
+      //const isLoggedIn=await login(password)
+      console.log("isWalletCreated", isWalletCreated);
 
       if (isWalletCreated) {
         setPlainMnemonic(mnemonics);
         setIsLoggedIn(true);
-        // setSignup(true);
+        //setSignup(true);
         return true;
       }
       return false;
@@ -192,21 +221,39 @@ export const LoginContextProvider = ({ children }: Props) => {
   const addAccount = async (accountName: string): Promise<boolean> => {
     try {
       const hdnode = ethers.HDNodeWallet.fromPhrase(planMnemonic!);
-      const secondAccount = hdnode.derivePath(`m/44'/60'/0'/0/1`);
-      //setWallet()
-      const data = {
-        address: secondAccount.address,
-        publicKey: secondAccount.publicKey,
-        privateKey: secondAccount.privateKey,
-        mnemonic: JSON.stringify(secondAccount.mnemonic?.phrase),
+      const index = wallet?.length ?? 0;
+      const account = hdnode.derivePath(`m/44'/60'/0'/0/${index + 1}`);
+      const data: WalletFields = {
+        address: account.address,
+        privateKey: account.publicKey,
       };
+      const updatedWallet = wallet ? [...wallet] : [];
+      const newAccount = {
+        [accountName]: data,
+      };
+      if (updatedWallet.length >= 10) {
+        return false;
+      }
+      updatedWallet.push(newAccount);
+      setWallet(updatedWallet);
+      console.log("wallet is ", wallet);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
 
-      const existingWallets = wallet as Wallet[];
-
-      existingWallets.push(data);
-      setWallet(existingWallets);
-      console.log("wallet", wallet);
-      console.log("secondAccount", secondAccount);
+  const switchAccount = async (privateKey: string): Promise<boolean> => {
+    try {
+      console.log("switching")
+      const wallet = new ethers.Wallet(privateKey);
+      console.log("walet is",wallet)
+      const provider = new ethers.JsonRpcProvider(getProvider(chainId))
+      wallet.connect(provider);
+      
+      const address = wallet.address;
+      console.log("address", address);
+      setAccount(address);
       return true;
     } catch (error) {
       return false;
@@ -227,24 +274,21 @@ export const LoginContextProvider = ({ children }: Props) => {
     return true;
   };
 
-
-  const isAuthenticated = async (token:string):Promise<boolean> => {
+  const isAuthenticated = async (token: string): Promise<boolean> => {
     try {
       const response = await verifyToken(token);
       if (!response) {
-        return false
+        return false;
       }
       const user = Cookies.get("token");
       if (!user) {
         return false;
       }
-      return true
+      return true;
     } catch (error) {
       return false;
     }
-  }
-
-
+  };
 
   const value = {
     isLoggedIn,
@@ -264,6 +308,7 @@ export const LoginContextProvider = ({ children }: Props) => {
     chainId,
     setChainId,
     addAccount,
+    switchAccount,
   };
 
   return (

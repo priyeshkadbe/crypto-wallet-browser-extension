@@ -1,5 +1,5 @@
 // AccountDropdown.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DropDownLayout from "./DropDownLayout";
 import {
   CurrencyRupeeIcon,
@@ -13,19 +13,22 @@ import {
   CurrencyDollarIcon,
 } from "@heroicons/react/20/solid";
 import { useLogin } from "@/providers/LoginProvider";
-import { ToastContainer, toast } from "react-toastify"
+import { ToastContainer, toast } from "react-toastify";
 
 interface AccountProps {
   onClose: () => void;
 }
 
+
 const AccountContent = () => {
   const [addNewAccount, setNewAccount] = useState(false);
-  const [accountName, setAccountName] = useState<string|null>(null);
+  const [accountName, setAccountName] = useState<string | null>(null);
 
-  const { account, addAccount,wallet } = useLogin();
+  const { account, addAccount, wallet, switchAccount } = useLogin();
 
-  useEffect(() => {}, [account]);
+  
+
+  useEffect(() => {}, [wallet]);
 
   useEffect(() => {}, [addNewAccount]);
   // if (addNewAccount) {
@@ -65,62 +68,39 @@ const AccountContent = () => {
   //     );
   // }
 
-
   const handleAddAccount = async () => {
+    
+    if (accountName === null || accountName === "") {
+      toast.error("account name cannot be empty");
+      return;
 
-    if (accountName === null || accountName=== "") {
-      toast.error("account name cannot be empty")
-      return
     }
 
     if (accountName !== null || accountName !== "") {
       const isAccountAdded = await addAccount(accountName!);
       if (isAccountAdded) {
-        toast.success("account added ")
-        return 
+        toast.success("account added ");
+        return;
       }
-    } 
-    
-  }
+    }
+  };
+
+  const handleSwitchAccount = async (privateKey: string) => {
+    if (privateKey !== null || privateKey !== undefined || privateKey === "") {
+      const isSwitchAccount = await switchAccount(privateKey);
+
+      if (isSwitchAccount) {
+        toast.success("account switched")
+        return
+      }
+      toast.error("unable to switch account");
+      return
+    }
+    toast.error("unable to switch account");
+    return
+  };
 
   return (
-    // <div className="flex flex-col w-full gap-1"></div>
-    //   {addNewAccount ? (
-    // <div className="flex flex-col w-full gap-1">
-    //   <div className="overflow-y-auto flex  flex-col  gap-2">
-    //   <h1>hello world</h1>
-    //   </div>
-    // </div>
-    //   ) : (
-    // <div className="flex flex-col w-full gap-1">
-    //   <div className="overflow-y-auto flex  flex-col  gap-2">
-    //     <button className="flex justify-start items-start  flex-grow gap-2 p-2 border border-gray-600 w-full">
-    //       <CurrencyDollarIcon className="h-8 w-8" />
-    //       <div className="flex flex-col">
-    //         <h2 className="text-lg font-medium">Account 1</h2>
-    //         <h2 className="text-xs ">
-    //           {account?.slice(0, 7)}....{account?.slice(-4)}
-    //         </h2>
-    //       </div>
-    //     </button>
-    //     {/* <button className="flex justify-start flex-grow items-start gap-2 p-2 border border-gray-600 w-full">
-    //     <CurrencyDollarIcon className="h-8 w-8" />
-    //     <div className="flex flex-col">
-    //       <h2 className="text-lg font-medium">Account 1</h2>
-    //       <h2 className="text-lg ">0xerererer</h2>
-    //     </div>
-    //   </button> */}
-    //   </div>
-    //     <button
-    //       type="button"
-    //     onClick={() => !setNewAccount}
-    //     className="flex justify-center items-center text-blue-500 "
-    //   >
-    //     Add New Account
-    //   </button>
-    // </div>
-    //   )}
-    // </div>
     <div>
       <div>
         {addNewAccount ? (
@@ -157,25 +137,33 @@ const AccountContent = () => {
         ) : (
           <div className="flex flex-col w-full gap-1">
             <div className="overflow-y-auto flex py-4 px-2  max-h-40 flex-col  gap-2">
-              <button className="flex justify-start items-center  flex-grow gap-2 p-2 border border-gray-600 w-full">
-                <CurrencyDollarIcon className="h-8 w-8" />
-                <div className="flex flex-col justify-start items-start">
-                  <h2 className="text-lg font-medium">Account 1</h2>
-                  <h2 className="text-md  ">
-                    {account?.slice(0, 7)}....{account?.slice(-4)}
-                  </h2>
-                </div>
-
-                <EllipsisVerticalIcon className="h-8 w-8 ml-auto" />
-              </button>
-
-              {/* <button className="flex justify-start flex-grow items-start gap-2 p-2 border border-gray-600 w-full">
-                <CurrencyDollarIcon className="h-8 w-8" />
-                <div className="flex flex-col">
-                  <h2 className="text-lg font-medium">Account 1</h2>
-                  <h2 className="text-lg ">0xerererer</h2>
-                </div>
-              </button> */}
+              {wallet?.map((accountData, index) => (
+                <button
+                  key={index} // Assuming each account has a unique key
+                  className="flex justify-start items-center flex-grow gap-2 p-2 border border-gray-600 w-full"
+                  onClick={() =>
+                    handleSwitchAccount(
+                      accountData[Object.keys(accountData)[0]].privateKey
+                    )
+                  }
+                >
+                  {/* <CurrencyDollarIcon className="h-8 w-8" /> */}
+                  <div className="flex flex-col justify-start items-start">
+                    <h2 className="text-lg font-medium">Account {index + 1}</h2>
+                    <h2 className="text-md ">
+                      {accountData[Object.keys(accountData)[0]].address?.slice(
+                        0,
+                        7
+                      )}
+                      ...
+                      {accountData[Object.keys(accountData)[0]].address?.slice(
+                        -4
+                      )}
+                    </h2>
+                  </div>
+                  <EllipsisVerticalIcon className="h-8 w-8 ml-auto" />
+                </button>
+              ))}
             </div>
             <button
               type="button"

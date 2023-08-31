@@ -2,16 +2,13 @@ import dotenv from "dotenv";
 dotenv.config();
 import jwt, { Secret } from "jsonwebtoken";
 
-interface User {
-  password: string;
-  mnemonic: string;
-}
 
-const createToken = (user: User) => {
+
+const createToken = (password: string) => {
   try {
     const JWT_KEY = process.env.NEXT_PUBLIC_JWT_KEY as Secret;
 
-    const result = jwt.sign(user, JWT_KEY, {
+    const result = jwt.sign(password, JWT_KEY, {
       expiresIn: "1h",
     });
     return result;
