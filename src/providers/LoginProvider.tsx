@@ -10,6 +10,7 @@ import {
   decryptMnemonic,
   encryptMnemonic,
 } from "@/utils/hashingAndEncrypting";
+import { createToken, verifyToken } from "@/utils/jwt";
 
 interface LoginContextType {
   isLoggedIn: boolean;
@@ -28,7 +29,8 @@ interface LoginContextType {
   setNetwork: (value: string | null) => void;
   chainId: number;
   setChainId: (val: number) => void;
-  addAccount: () => void;
+  addAccount: (val: string) => Promise<boolean>;
+  switchAccount: (val: string) => Promise<boolean>;
 }
 
 const LoginContext = React.createContext<LoginContextType | null>(null);
@@ -37,12 +39,12 @@ interface Props {
   children: ReactNode;
 }
 
-interface Wallet {
+interface WalletFields {
   address: string;
-  publicKey: string;
   privateKey: string;
-  mnemonic: string;
 }
+
+type Wallet = Array<Record<string, WalletFields>>;
 
 export const LoginContextProvider = ({ children }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -52,10 +54,23 @@ export const LoginContextProvider = ({ children }: Props) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [network, setNetwork] = useState<string | null>(null);
-  const [chainId, setChainId] = useState<number>(80001);
+  const [chainId, setChainId] = useState<number>(11155111);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [mnemonic, setLocalMnemonics] = useState<string | null>(null);
   const [planMnemonic, setPlainMnemonic] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   const token = Cookies.get("token");
+  //   if (token) {
+  //     isAuthenticated(token).then((valid) => {
+  //       if (valid) {
+  //         setIsLoggedIn(true);
+  //       } else {
+  //         setIsLoggedIn(false);
+  //       }
+  //     });
+  //   }
+  // });
 
   useEffect(() => {
     const pass = Cookies.get("password");
@@ -65,7 +80,7 @@ export const LoginContextProvider = ({ children }: Props) => {
     if (pass !== undefined && mne !== undefined) {
       setLocalMnemonics(mne);
       setLocalPassword(pass);
-      //setSignup(true);
+      setSignup(true);
     }
   }, [localPassword, chainId, network, wallet, balance]);
 
@@ -80,74 +95,62 @@ export const LoginContextProvider = ({ children }: Props) => {
   const changeNetwork = (chainId: number) => {
     setChainId(chainId);
     if (wallet !== null) {
-      const provider = new ethers.providers.JsonRpcProvider(
-        getProvider(chainId)
-      );
+      const provider = new ethers.JsonRpcProvider(getProvider(chainId));
       console.log("provider is ", getProvider(chainId));
       provider.getNetwork().then((val) => {
         setNetwork(val.name);
         console.log("logoUrl:", val);
-        console.log("provider.getSigner", provider.getSigner());
+        //console.log("provider.getSigner", provider.getSigner());
       });
-      provider.getBalance(wallet.address).then((val) => {
-        setBalance(ethers.utils.formatEther(val).toString());
-      });
+      // provider.getBalance(address).then((val) => {
+      //   setBalance(ethers.utils.formatEther(val).toString());
+      // });
+      //provider.getBalance()
     }
-  };
-
-  const addAccount = () => {
-    // if (wallet && wallet.mnemonic) {
-    //   const provider = new ethers.utils.HDNode.fromSeed(
-    //     wallet.mnemonic,
-    //     "https://mainnet.infura.io/v3/your-project-id"
-    //   );
-    //   const newWallet = new ethers.Wallet(provider);
-    //   if (newWallet.address) {
-    //     // Add the new account's address to the list of accounts
-    //     setAccounts((prevAccounts) => [...prevAccounts, newWallet.address]);
-    //     // You can perform additional actions if needed
-    //     console.log("new accounts", newWallet);
-    //   }
-    // }
   };
 
   const createWallet = async (mnemonic: string): Promise<boolean> => {
     try {
-      if (chainId === null) {
-        return false;
-      }
-
-      const provider = new ethers.providers.JsonRpcProvider(
-        getProvider(chainId)
-      );
-      console.log("provider is ", getProvider(chainId));
-      const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
-
-      if (wallet.address) {
+      const provider = new ethers.JsonRpcProvider(getProvider(chainId));
+      console.log("provider is ", provider);
+      provider.getBlockNumber().then((val) => {
+        console.log("block", val);
+      });
+      // const wallet = ethers.Wallet.fromMnemonic(mnemonic.toString());
+      const wallet = await ethers.HDNodeWallet.fromPhrase(mnemonic);
+      console.log("wallet", wallet);
+      if (await wallet.address) {
         const data = {
           address: wallet.address,
-          publicKey: wallet.publicKey,
+          //publicKey: wallet.publicKey,
           privateKey: wallet.privateKey,
-          mnemonic: wallet.mnemonic.phrase,
+          // mnemonic: JSON.stringify(wallet.mnemonic?.phrase),
         };
 
-        setWallet(data);
+        setWallet((prevWallet) => [
+          ...(prevWallet || []),
+          {
+            [`Account${(prevWallet?.length || 0) + 1}`]: {
+              address: data.address,
+              privateKey: data.privateKey,
+            },
+          },
+        ]);
+
+        setAccount(wallet.address);
+        // setWallet(data);
         console.log("data is ", data);
 
-        const val = await provider.getNetwork();
-        setNetwork(val.name);
-        console.log("logoUrl:", val);
-        console.log("provider.getSigner", provider.getSigner());
+        provider.getNetwork().then((val) => {
+          console.log(val);
+          setNetwork(val.toString());
+        });
 
-        const balanceVal = await provider.getBalance(wallet.address);
-        setBalance(ethers.utils.formatEther(balanceVal));
-
-        //console.log("locWallet", locWallet);
-        const locWallet = new ethers.Wallet(wallet.privateKey, provider);
-
-        console.log("loc wallet", locWallet);
-        setAccount(locWallet.address);
-
+        provider.getBalance(wallet.address).then((val) => {
+          console.log(ethers.formatEther(val));
+          setBalance(ethers.formatEther(val));
+        });
+        setIsLoggedIn(true);
         return true;
       }
 
@@ -156,28 +159,25 @@ export const LoginContextProvider = ({ children }: Props) => {
       return false;
     }
   };
+
   const login = async (enteredPassword: string): Promise<boolean> => {
     try {
-      // const hashPassword = hashedPassword(enteredPassword);
-      // const storedHashedPassword = Cookies.get("password");
-      // const encryptMnemonic = Cookies.get("mnemonic");
-
       let isPasswordValid = false;
       if (localPassword !== null) {
         isPasswordValid = comparePassword(enteredPassword, localPassword);
       }
 
       if (mnemonic !== null && localPassword !== null && isPasswordValid) {
+        // const newJwt = await createToken(enteredPassword);
+        // Cookies.set("token", newJwt);
         const decryptedMnemonic = decryptMnemonic(mnemonic, enteredPassword);
         console.log("decryptMnemonic", decryptedMnemonic);
         setPlainMnemonic(decryptedMnemonic.toString());
         console.log("planMnemonic", planMnemonic);
-
         const isWalletCreated = await createWallet(planMnemonic!);
-
         if (isWalletCreated) {
           setIsLoggedIn(true);
-          //  setSignup(true);
+          setSignup(true);
           return true;
         }
 
@@ -203,13 +203,58 @@ export const LoginContextProvider = ({ children }: Props) => {
       });
 
       const isWalletCreated = await createWallet(mnemonics);
+      //const isLoggedIn=await login(password)
+      console.log("isWalletCreated", isWalletCreated);
 
       if (isWalletCreated) {
+        setPlainMnemonic(mnemonics);
         setIsLoggedIn(true);
-        // setSignup(true);
+        //setSignup(true);
         return true;
       }
       return false;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const addAccount = async (accountName: string): Promise<boolean> => {
+    try {
+      const hdnode = ethers.HDNodeWallet.fromPhrase(planMnemonic!);
+      const index = wallet?.length ?? 0;
+      const account = hdnode.derivePath(`m/44'/60'/0'/0/${index + 1}`);
+      const data: WalletFields = {
+        address: account.address,
+        privateKey: account.publicKey,
+      };
+      const updatedWallet = wallet ? [...wallet] : [];
+      const newAccount = {
+        [accountName]: data,
+      };
+      if (updatedWallet.length >= 10) {
+        return false;
+      }
+      updatedWallet.push(newAccount);
+      setWallet(updatedWallet);
+      console.log("wallet is ", wallet);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const switchAccount = async (privateKey: string): Promise<boolean> => {
+    try {
+      console.log("switching")
+      const wallet = new ethers.Wallet(privateKey);
+      console.log("walet is",wallet)
+      const provider = new ethers.JsonRpcProvider(getProvider(chainId))
+      wallet.connect(provider);
+      
+      const address = wallet.address;
+      console.log("address", address);
+      setAccount(address);
+      return true;
     } catch (error) {
       return false;
     }
@@ -227,6 +272,22 @@ export const LoginContextProvider = ({ children }: Props) => {
   const logout = (): boolean => {
     setIsLoggedIn(false);
     return true;
+  };
+
+  const isAuthenticated = async (token: string): Promise<boolean> => {
+    try {
+      const response = await verifyToken(token);
+      if (!response) {
+        return false;
+      }
+      const user = Cookies.get("token");
+      if (!user) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
   };
 
   const value = {
@@ -247,6 +308,7 @@ export const LoginContextProvider = ({ children }: Props) => {
     chainId,
     setChainId,
     addAccount,
+    switchAccount,
   };
 
   return (

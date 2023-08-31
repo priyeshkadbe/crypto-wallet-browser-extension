@@ -59,7 +59,7 @@ function Navbar() {
   const icons: Record<string, React.ReactNode> = {
     network: (
       <div className="flex justify-center items-center gap-x-4">
-        <span className="hidden md:flex ">
+        <span className="hidden md:flex text-white">
           {
             networks_const.find((network) => network.chainId === chainId)
               ?.network

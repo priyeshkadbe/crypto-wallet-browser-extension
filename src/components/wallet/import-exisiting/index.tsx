@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { SecretRecoveryPhase } from "./secret-recovery-phrase";
 
 import { Password } from "./password";
-import { mnemonicToSeed } from "ethers/lib/utils";
+// import { mnemonicToSeed } from "ethers/lib/utils";
 import Stages from "./stages";
 import { useLogin } from "@/providers/LoginProvider";
 import { RotatingLines } from "react-loader-spinner";
