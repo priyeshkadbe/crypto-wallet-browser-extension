@@ -27,8 +27,8 @@ export const SecretRecoveryPhase: React.FC<SecretRecoveryPhaseProps> = ({
 
   const generateMnemonic = async () => {
     try {
-      const entropy = ethers.utils.randomBytes(16);
-      const mnemonic = ethers.utils.entropyToMnemonic(entropy);
+      
+      const mnemonic = ""
       setMnemonics(mnemonic);
       setSecretPhrase(mnemonic.toString());
     } catch (error) {

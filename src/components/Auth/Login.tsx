@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ReactSVG } from "react-svg";
+
 import { RotatingLines } from "react-loader-spinner";
 
 import { Logo } from "@/svg-icons/Logo";

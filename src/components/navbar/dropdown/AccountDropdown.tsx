@@ -142,33 +142,24 @@ const AccountContent = () => {
         ) : (
           <div className="flex flex-col w-full gap-1">
             <div className="overflow-y-auto flex py-4 px-2  max-h-40 flex-col  gap-2">
-              {wallet?.map((accountData, index) => (
-                <button
-                  key={index} // Assuming each account has a unique key
-                  className="flex justify-start items-center flex-grow gap-2 p-2 border border-gray-600 w-full"
-                  onClick={() =>
-                    handleSwitchAccount(
-                      accountData[Object.keys(accountData)[0]].address
-                    )
-                  }
-                >
-                  {/* <CurrencyDollarIcon className="h-8 w-8" /> */}
-                  <div className="flex flex-col justify-start items-start">
-                    <h2 className="text-lg font-medium">Account {index + 1}</h2>
-                    <h2 className="text-md ">
-                      {accountData[Object.keys(accountData)[0]].address?.slice(
-                        0,
-                        7
-                      )}
-                      ...
-                      {accountData[Object.keys(accountData)[0]].address?.slice(
-                        -4
-                      )}
-                    </h2>
-                  </div>
-                  <EllipsisVerticalIcon className="h-8 w-8 ml-auto" />
-                </button>
-              ))}
+              {Object.entries(wallet || {}).map(
+                ([accountName, accountData], index) => (
+                  <button
+                    key={index}
+                    className="flex justify-start items-center flex-grow gap-2 p-2 border border-gray-600 w-full"
+                    onClick={() => handleSwitchAccount(accountData.address)}
+                  >
+                    <div className="flex flex-col justify-start items-start">
+                      <h2 className="text-lg font-medium">{accountName}</h2>
+                      <h2 className="text-md">
+                        {accountData.address?.slice(0, 7)}...
+                        {accountData.address?.slice(-4)}
+                      </h2>
+                    </div>
+                    <EllipsisVerticalIcon className="h-8 w-8 ml-auto" />
+                  </button>
+                )
+              )}
             </div>
             <button
               type="button"

@@ -57,26 +57,17 @@ export const LoginContextProvider = ({ children }: Props) => {
   const [isSignup, setSignup] = useState(false);
   const [localPassword, setLocalPassword] = useState<string | null>(null);
   const [account, setAccount] = useState<string | null>(null);
-  const [wallet, setWallet] = useState<Wallet | null>(null);
+ 
+  const [wallet, setWallet] = useState<Wallet>(() => {
+    const storedWallet = localStorage.getItem("wallet");
+    return storedWallet ? JSON.parse(storedWallet) : {};
+  });
   const [balance, setBalance] = useState<string | null>(null);
   const [network, setNetwork] = useState<string | null>(null);
   const [chainId, setChainId] = useState<number>(11155111);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [mnemonic, setLocalMnemonics] = useState<string | null>(null);
   const [planMnemonic, setPlainMnemonic] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   const token = Cookies.get("token");
-  //   if (token) {
-  //     isAuthenticated(token).then((valid) => {
-  //       if (valid) {
-  //         setIsLoggedIn(true);
-  //       } else {
-  //         setIsLoggedIn(false);
-  //       }
-  //     });
-  //   }
-  // });
 
   useEffect(() => {
     // When the component mounts, check if the user has a valid token
@@ -90,7 +81,12 @@ export const LoginContextProvider = ({ children }: Props) => {
         }
       });
     }
-  }, []); 
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("wallet", JSON.stringify(wallet));
+  }, [wallet]);
+
 
   useEffect(() => {
     // const pass = Cookies.get("password");
@@ -103,9 +99,6 @@ export const LoginContextProvider = ({ children }: Props) => {
     //   //setSignup(true);
     // }
   }, [isLoggedIn, localPassword, chainId, network, wallet, balance]);
-
-
-  
 
   const isPasswordPresent = () => {
     return Cookies.get("password") !== undefined; // Use Cookies.get instead of localStorage.getItem
@@ -190,83 +183,27 @@ export const LoginContextProvider = ({ children }: Props) => {
     }
   };
 
-  // const login = async (enteredPassword: string): Promise<boolean> => {
-  //   try {
-  //     let isPasswordValid = false;
-  //     if (localPassword !== null) {
-  //       isPasswordValid = comparePassword(enteredPassword, localPassword);
-  //     }
-
-  //     if (mnemonic !== null && localPassword !== null && isPasswordValid) {
-  //       // const newJwt = await createToken(enteredPassword);
-  //       // Cookies.set("token", newJwt);
-  //       const decryptedMnemonic = decryptMnemonic(mnemonic, enteredPassword);
-  //       console.log("decryptMnemonic", decryptedMnemonic);
-  //       setPlainMnemonic(decryptedMnemonic.toString());
-  //       console.log("planMnemonic", planMnemonic);
-  //       const isWalletCreated = await createWallet(planMnemonic!);
-  //       if (isWalletCreated) {
-  //         setIsLoggedIn(true);
-  //         //setSignup(true);
-  //         return true;
-  //       }
-
-  //       return false;
-  //     }
-
-  //     return false;
-  //   } catch (error) {
-  //     return false;
-  //   }
-  // };
-
   const login = async (enteredPassword: string): Promise<boolean> => {
     try {
-
-      const hashPassword=Cookies.get("password");
-      const isPasswordValid=await comparePassword(hashPassword!,enteredPassword);
+      const hashPassword = Cookies.get("password");
+      const isPasswordValid = await comparePassword(
+        hashPassword!,
+        enteredPassword
+      );
       const token = Cookies.get("token");
       const isTokenValid = await verifyToken(token!);
-      const enMnemonic = Cookies.get("mnemonic")
+      const enMnemonic = Cookies.get("mnemonic");
       const dMnemonic = await decryptMnemonic(enMnemonic!, enteredPassword);
       const isWalletCreated = await createWallet(dMnemonic!);
-      
+
       if (isPasswordValid && isTokenValid && isWalletCreated) {
-        return true
+        return true;
       }
       return false;
     } catch (error) {
       return false;
     }
   };
-
-  // const signup = async (
-  //   mnemonics: string,
-  //   password: string
-  // ): Promise<boolean> => {
-  //   try {
-  //     const hashPass = hashedPassword(password.toString());
-  //     Cookies.set("password", hashPass, { expires: 365 });
-
-  //     await encryptMnemonic(mnemonics, password).then((val) => {
-  //       Cookies.set("mnemonic", val.toString(), { expires: 365 });
-  //     });
-
-  //     const isWalletCreated = await createWallet(mnemonics);
-  //     //const isLoggedIn=await login(password)
-  //     console.log("isWalletCreated", isWalletCreated);
-
-  //     if (isWalletCreated) {
-  //       setPlainMnemonic(mnemonics);
-  //       setIsLoggedIn(true);
-  //       //setSignup(true);
-  //       return true;
-  //     }
-  //     return false;
-  //   } catch (error) {
-  //     return false;
-  //   }
-  // };
 
   const signup = async (
     mnemonic: string,
@@ -279,17 +216,15 @@ export const LoginContextProvider = ({ children }: Props) => {
         Cookies.set("mnemonic", val);
       });
 
-      const token = await createToken({password, mnemonic});
+      const token = await createToken({ password, mnemonic });
       console.log("token", token);
-
-      
 
       await Cookies.set("password", hashPassword);
 
       await Cookies.set("token", token);
       await setIsLoggedIn(true);
 
-      const isLoggedIn=await login(password)
+      const isLoggedIn = await login(password);
 
       if (isLoggedIn) {
         return true;
@@ -366,7 +301,7 @@ export const LoginContextProvider = ({ children }: Props) => {
   const signOut = (): boolean => {
     Cookies.remove("password");
     Cookies.remove("mnemonic");
-    Cookies.remove("token")
+    Cookies.remove("token");
     setLocalPassword(null);
     setSignup(false);
     setIsLoggedIn(false);
