@@ -30,7 +30,7 @@
     "ethers": "^6.7.1",
     "heroicons": "^2.0.18",
     "js-cookie": "^3.0.5",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "8.5.1 ",
     "next": "13.4.19",
     "npm-watch": "^0.11.0",
     "postcss": "8.4.28",
